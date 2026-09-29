@@ -185,6 +185,33 @@ code{background:var(--surface-2);padding:1px 5px;border-radius:5px;font-size:13p
 .dlg-foot{display:flex;justify-content:flex-end;padding:12px 20px calc(16px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
 details summary{cursor:pointer;font-weight:600;font-size:14px;margin:6px 0}
 
+/* folders */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:0 16px 8px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;height:34px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:14px;font-weight:500;color:var(--muted);white-space:nowrap}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip.add{border-style:dashed}
+.folderbar{display:flex;gap:6px;align-items:center;padding:0 16px 8px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+.folderbar b{color:var(--ink);font-weight:600;margin-right:auto}
+.folderbar button{font-size:13px;font-weight:600;color:var(--accent);padding:4px 8px;border-radius:8px}
+.folderbar button:hover{background:var(--surface-2)}
+.folderbar .danger{color:var(--rec)}
+.card-folder{display:inline-block;font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:6px;padding:1px 7px;margin-right:6px}
+.subbar{display:flex;align-items:center;gap:4px;padding:0 16px 8px 60px;margin-top:-6px;color:var(--muted)}
+.subbar svg{width:15px;height:15px}
+#folderSel{max-width:220px}
+/* mini player */
+.miniplayer{margin:0 16px 10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;flex:none}
+#home .miniplayer{margin-bottom:calc(10px + env(safe-area-inset-bottom))}
+.mp-bar{height:3px;background:var(--line)}
+.mp-bar span{display:block;height:100%;width:0;background:var(--accent)}
+.mp-row{display:flex;align-items:center;gap:4px;padding:8px 8px 8px 10px}
+.mp-info{flex:1;min-width:0;text-align:left;display:flex;flex-direction:column;padding:2px 6px;border-radius:8px}
+.mp-info:hover{background:var(--surface-2)}
+.mp-info b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp-info span{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+body.mini-on .fab{bottom:calc(92px + env(safe-area-inset-bottom))}
+body.mini-on #list{padding-bottom:90px}
 #toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:.2s;max-width:calc(100vw - 32px);z-index:50;text-align:center}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 </style>
@@ -201,6 +228,8 @@ details summary{cursor:pointer;font-weight:600;font-size:14px;margin:6px 0}
     <button id="settingsBtn" class="icon-btn" title="Settings" aria-label="Settings"></button>
   </header>
   <div class="search"><input id="search" type="search" placeholder="Search titles, notes and transcripts" autocomplete="off"></div>
+  <div class="chips" id="chips"></div>
+  <div class="folderbar" id="folderBar" hidden></div>
   <main id="list"></main>
   <button id="newBtn" class="fab"><span class="d"></span>New recording</button>
 </section>
@@ -222,6 +251,8 @@ details summary{cursor:pointer;font-weight:600;font-size:14px;margin:6px 0}
       </div>
     </div>
   </header>
+
+  <div class="subbar" id="subbar"><span id="folderIcon"></span><select id="folderSel" class="langsel" aria-label="Folder (subject)"></select></div>
 
   <div id="recPanel" class="panel">
     <div class="rec-row">
@@ -314,6 +345,16 @@ details summary{cursor:pointer;font-weight:600;font-size:14px;margin:6px 0}
   <div class="dlg-foot"><button id="closeSettings" class="btn primary">Done</button></div>
 </dialog>
 
+<div id="mini" class="miniplayer" hidden>
+  <div class="mp-bar"><span id="mpProg"></span></div>
+  <div class="mp-row">
+    <button id="mpPlay" class="round main" aria-label="Play"></button>
+    <button id="mpOpen" class="mp-info" title="Open this recording"><b id="mpTitle"></b><span id="mpTime"></span></button>
+    <button id="mpBack" class="round" aria-label="Back 10 seconds"><small>−10</small></button>
+    <button id="mpFwd" class="round" aria-label="Forward 10 seconds"><small>+10</small></button>
+    <button id="mpClose" class="round" aria-label="Close player">✕</button>
+  </div>
+</div>
 <div id="toast" role="status" aria-live="polite"></div>
 <div id="dropZone" hidden>Drop audio to import it into Recall</div>
 
@@ -350,6 +391,7 @@ const I = {
   down:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-5-5 5 5 5-5M5 21h14"/></svg>',
   trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>',
   upload:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3m-5 5 5-5 5 5M5 21h14"/></svg>',
+  folder:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>',
   broom:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M6 16l4-10 4 10M8 12h4"/></svg>',
 };
 
@@ -443,6 +485,9 @@ let rec = null;          // active recording
 let saveTimer = null;
 const audio = new Audio(); audio.preload = 'metadata';
 let audioUrl = null, seeking = false, fixingDuration = false;
+const NO_FOLDER = '__none__';
+let folderFilter = ls.get('folderFilter', '');      // '' = all, NO_FOLDER = not in a folder, else a folder name
+let knownFolders = [];
 
 function newSession() {
   const d = new Date();
@@ -451,6 +496,7 @@ function newSession() {
     title: d.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' }) + ' · ' + d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }),
     createdAt: Date.now(), updatedAt: Date.now(), duration: 0, mimeType: '', lang: settings.lang,
     notes: [], transcript: [], hasAudio: false, audioLocal: false, recording: false,
+    folder: (folderFilter && folderFilter !== NO_FOLDER) ? folderFilter : '',
   };
 }
 function touch() { if (!cur) return; cur.updatedAt = Date.now(); scheduleSave(); scheduleAutoSync(); }
@@ -476,17 +522,22 @@ window.addEventListener('hashchange', () => {
    ========================================================= */
 async function goHome() {
   if (cur) { await flushSave(); }
-  audio.pause(); cur = null;
+  cur = null;
   $('#session').hidden = true; $('#home').hidden = false;
-  renderList();
+  renderList(); updateMini();
 }
 async function renderList() {
   const q = $('#search').value.trim().toLowerCase();
   let all = (await DB.all()).filter(s => !s.pendingDelete).sort((a, b) => b.createdAt - a.createdAt);
+  knownFolders = [...new Set([...(settings.folders || []), ...all.map(s => s.folder).filter(Boolean)])].sort((a, b) => a.localeCompare(b));
+  renderChips();
+  if (folderFilter === NO_FOLDER) all = all.filter(s => !s.folder);
+  else if (folderFilter) all = all.filter(s => s.folder === folderFilter);
   if (q) all = all.filter(s => (s.title + ' ' + s.notes.map(n => n.text).join(' ') + ' ' + s.transcript.map(t => t.text).join(' ') + ' ' + (s.fullTranscript || []).map(t => t.text).join(' ')).toLowerCase().includes(q));
   const el = $('#list');
   if (!all.length) {
     el.innerHTML = q ? `<div class="empty"><h2>No matches</h2>Try another word.</div>`
+      : folderFilter ? `<div class="empty"><h2>Nothing here yet</h2>New recordings you make while this folder is selected go straight into it.<br>You can also move a recording here from its page (the folder name under the title).</div>`
       : `<div class="empty"><h2>No recordings yet</h2>Tap <b>New recording</b> to start. Type notes while it records —<br>each note is stamped with that moment, so you can tap it later to hear exactly what was said.</div>`;
     return;
   }
@@ -496,7 +547,7 @@ async function renderList() {
     const cloud = settings.clientId ? `<span class="cloud ${synced ? 'done' : ''}" title="${synced ? 'Saved to Google Drive' : 'Not synced yet'}">${synced ? I.cloudOk : I.cloudUp}</span>` : '';
     return `<button class="card" data-id="${esc(s.id)}">
       <div class="card-top"><span class="card-title">${esc(s.title)}</span>${cloud}</div>
-      <div class="card-meta">${dateStr(s.createdAt)} · ${fmt(s.duration)} · ${s.notes.length} note${s.notes.length === 1 ? '' : 's'}</div>
+      <div class="card-meta">${s.folder && !folderFilter ? `<span class="card-folder">${esc(s.folder)}</span>` : ''}${dateStr(s.createdAt)} · ${fmt(s.duration)} · ${s.notes.length} note${s.notes.length === 1 ? '' : 's'}</div>
       <div class="card-prev">${esc(prev)}</div></button>`;
   }).join('');
 }
@@ -504,9 +555,78 @@ $('#list').addEventListener('click', e => { const c = e.target.closest('.card');
 $('#search').addEventListener('input', () => renderList());
 $('#newBtn').addEventListener('click', async () => {
   const s = newSession(); await DB.put(s);
+  if (audio && !audio.paused) audio.pause();
   cur = s; history.pushState(null, '', '#s=' + s.id);
   await showSession();
   startRecording();           // start straight away — one tap to go
+});
+
+/* ---------- folders (one per subject) ---------- */
+const cleanFolder = n => (n || '').replace(/[\\/:*?"<>|\u0000]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 60);
+function addFolder(name) {
+  name = cleanFolder(name); if (!name) return '';
+  settings.folders = [...new Set([...(settings.folders || []), name])]; saveSettings();
+  if (!knownFolders.includes(name)) knownFolders = [...knownFolders, name].sort((a, b) => a.localeCompare(b));
+  return name;
+}
+function setFolderFilter(f) { folderFilter = f; ls.set('folderFilter', f); renderList(); }
+function renderChips() {
+  const names = knownFolders;
+  if (folderFilter && folderFilter !== NO_FOLDER && !names.includes(folderFilter)) { folderFilter = ''; ls.set('folderFilter', ''); }
+  const chip = (v, label) => `<button class="chip${folderFilter === v ? ' on' : ''}" data-f="${esc(v)}">${esc(label)}</button>`;
+  $('#chips').innerHTML = chip('', 'All') + names.map(n => chip(n, n)).join('') + (names.length ? chip(NO_FOLDER, 'No folder') : '') +
+    `<button class="chip add" data-new>+ New folder</button>`;
+  const bar = $('#folderBar');
+  if (folderFilter && folderFilter !== NO_FOLDER) {
+    bar.hidden = false;
+    bar.innerHTML = `<b>${I.folder} ${esc(folderFilter)}</b><button data-fa="export">Download all as text</button><button data-fa="rename">Rename</button><button data-fa="delete" class="danger">Delete folder</button>`;
+  } else bar.hidden = true;
+}
+$('#chips').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.hasAttribute('data-new')) {
+    const n = addFolder(prompt('Name the new folder (for example a subject: “Thermodynamics”)') || '');
+    if (n) setFolderFilter(n);
+    return;
+  }
+  setFolderFilter(b.dataset.f);
+});
+$('#folderBar').addEventListener('click', async e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const f = folderFilter, inF = (await DB.all()).filter(s => s.folder === f && !s.pendingDelete);
+  if (b.dataset.fa === 'export') {
+    if (!inF.length) return toast('No recordings in this folder yet');
+    inF.sort((a, b) => a.createdAt - b.createdAt);
+    const md = `# ${f}\n\n${inF.length} recording${inF.length === 1 ? '' : 's'}, oldest first.\n\n---\n\n` + inF.map(toMarkdown).join('\n\n---\n\n');
+    download(new Blob([md], { type: 'text/markdown' }), fileSafe(f) + ' - all recordings.md');
+  } else if (b.dataset.fa === 'rename') {
+    const n = cleanFolder(prompt('Rename folder', f) || '');
+    if (!n || n === f) return;
+    for (const s of inF) { s.folder = n; s.updatedAt = Date.now(); await DB.put(s); }
+    settings.folders = (settings.folders || []).filter(x => x !== f); addFolder(n);
+    knownFolders = knownFolders.filter(x => x !== f);
+    setFolderFilter(n); scheduleAutoSync(); toast('Folder renamed');
+  } else if (b.dataset.fa === 'delete') {
+    if (!confirm(`Delete the folder “${f}”? The ${inF.length} recording${inF.length === 1 ? '' : 's'} in it are kept and moved to “No folder”.`)) return;
+    for (const s of inF) { s.folder = ''; s.updatedAt = Date.now(); await DB.put(s); }
+    settings.folders = (settings.folders || []).filter(x => x !== f); saveSettings();
+    knownFolders = knownFolders.filter(x => x !== f);
+    setFolderFilter(''); scheduleAutoSync();
+  }
+});
+function renderFolderSel() {
+  const sel = $('#folderSel'), names = [...new Set([...knownFolders, ...(settings.folders || []), cur.folder].filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  sel.innerHTML = `<option value="">No folder</option>` + names.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join('') + `<option value="__new__">+ New folder…</option>`;
+  sel.value = cur.folder || '';
+}
+$('#folderSel').addEventListener('change', e => {
+  let v = e.target.value;
+  if (v === '__new__') {
+    v = addFolder(prompt('Name the new folder (for example a subject: “Thermodynamics”)') || '');
+    if (!v) { e.target.value = cur.folder || ''; return; }
+  }
+  cur.folder = v; touch(); renderFolderSel();
+  toast(v ? `Moved to “${v}”` : 'Removed from folder');
 });
 
 /* =========================================================
@@ -524,8 +644,8 @@ async function showSession() {
   $('#title').value = cur.title;
   tView = cur.fullTranscript?.length ? 'full' : 'live'; lastActive = {};
   setTab('notes');
-  renderNotes(); renderTranscript(); renderControls();
-  await loadAudio();
+  renderNotes(); renderTranscript(); renderControls(); renderFolderSel();
+  await loadAudio(); updateMini();
 }
 function renderControls() {
   const recording = !!rec;
@@ -537,7 +657,7 @@ function renderControls() {
   $('#liveDot').hidden = !recording;
   $('#pauseBtn').hidden = $('#stopBtn').hidden = !recording;
   $('#caption').hidden = !recording || !settings.transcript;
-  $('#txBtn').hidden = !(hasLocal && !recording && !TX.job) || !!cur.fullTranscript?.length;
+  $('#txBtn').hidden = !(hasLocal && !recording && !TX.job);
   $('#tSwitch').hidden = !(cur.fullTranscript?.length || (TX.job && TX.job.s === cur)) || recording;
   $('#menuList [data-act=transcribe]').hidden = !(hasLocal && !recording && !TX.job);
   showTxJob();
@@ -549,11 +669,12 @@ function renderControls() {
     $('#recStatus').textContent = cur.hasAudio ? '' : 'Tap to record. Notes you type get timestamps.';
   }
   fillLangSel(); $('#tLangSel').value = cur.lang || settings.lang;
-  const redo = !!cur.fullTranscript?.length && cur.fullLang && cur.fullLang !== (cur.lang || settings.lang);
-  if (redo && hasLocal && !recording && !TX.job) { $('#txBtn').hidden = false; $('#txBtn').textContent = 'Redo'; $('#txBtn').title = 'Redo the full transcript in ' + langName(cur.lang); }
-  else $('#txBtn').textContent = 'Transcribe audio';
+  const hasFull = !!cur.fullTranscript?.length;
+  $('#txBtn').textContent = hasFull ? 'Redo' : 'Transcribe audio';
+  $('#txBtn').title = hasFull ? 'Make the full transcript again from the audio (in ' + langName(cur.lang || settings.lang) + ')' : 'Make a full transcript from the audio';
   $('#menuList [data-act=audio]').hidden = !hasLocal;
   $('#menuList [data-act=freeaudio]').hidden = !(hasLocal && cur.driveAudioId);
+  updateMini();
 }
 function setTab(t) {
   $('#panes').dataset.tab = t;
@@ -563,7 +684,7 @@ $('#tabs').addEventListener('click', e => { const b = e.target.closest('button')
 $('#backBtn').addEventListener('click', () => {
   if (history.state === null && location.hash) { location.hash = ''; } else { history.back(); }
 });
-$('#title').addEventListener('input', () => { cur.title = $('#title').value; touch(); });
+$('#title').addEventListener('input', () => { cur.title = $('#title').value; touch(); if (player.sid === cur.id) { player.title = cur.title; setMediaSession(); } });
 $('#title').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('#noteInput').focus(); } });
 
 /* ---------- notes ---------- */
@@ -696,6 +817,7 @@ function elapsed() { return rec ? Math.round(rec.acc + (rec.paused ? 0 : perform
 
 async function startRecording() {
   if (rec || !cur || cur.hasAudio) return;
+  if (!audio.paused) audio.pause();
   if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) { toast('Recording is not supported in this browser.'); return; }
   let stream;
   try {
@@ -894,35 +1016,65 @@ async function recoverInterrupted() {
 /* =========================================================
    PLAYBACK
    ========================================================= */
-async function loadAudio() {
+/* The audio element can keep playing one recording (player.sid) while you browse
+   elsewhere. The session page controls it when it's showing that same recording. */
+const player = { sid: null, title: '', duration: 0 };
+let pendingSeek = null;
+const isMine = () => !!(cur && player.sid === cur.id);
+async function loadInto(s) {
+  audio.pause();
+  if (audioUrl) { URL.revokeObjectURL(audioUrl); audioUrl = null; }
+  const blob = await DB.getAudio(s.id);
+  if (!blob) { await patchLocal(s.id, { audioLocal: false }); if (cur?.id === s.id) renderControls(); return false; }
+  audioUrl = URL.createObjectURL(blob); audio.src = audioUrl;
+  Object.assign(player, { sid: s.id, title: s.title, duration: s.duration || 0 });
+  audio.playbackRate = 1; $('#speedBtn').textContent = '1×';
+  setMediaSession(); return true;
+}
+async function loadAudio() {                 // called when a recording page opens
+  lastActive = {};
+  if (cur && cur.hasAudio && cur.audioLocal && !isMine() && (audio.paused || !player.sid)) await loadInto(cur);
+  updatePlayUI();
+}
+async function ensureMine() {
+  if (isMine()) return true;
+  if (!cur || !cur.hasAudio || !cur.audioLocal) return false;
+  return loadInto(cur);
+}
+function clearPlayer() {
   audio.pause();
   if (audioUrl) { URL.revokeObjectURL(audioUrl); audioUrl = null; }
   audio.removeAttribute('src'); audio.load();
-  updatePlayUI();
-  if (!cur || !cur.hasAudio || !cur.audioLocal) return;
-  const blob = await DB.getAudio(cur.id);
-  if (!blob) { await patchLocal(cur.id, { audioLocal: false }); renderControls(); return; }
-  audioUrl = URL.createObjectURL(blob); audio.src = audioUrl;
+  Object.assign(player, { sid: null, title: '', duration: 0 });
+  if ('mediaSession' in navigator) navigator.mediaSession.metadata = null;
+  updatePlayUI(); updateMini();
 }
-function durMs() { return isFinite(audio.duration) && audio.duration > 0 ? audio.duration * 1000 : (cur?.duration || 0); }
+function setPos(sec) {
+  if (audio.readyState < 1 || fixingDuration) pendingSeek = sec; else audio.currentTime = sec;
+}
+function playerDur() { return isFinite(audio.duration) && audio.duration > 0 ? audio.duration * 1000 : player.duration; }
+function durMs() { return isMine() ? playerDur() : (cur?.duration || 0); }
 audio.addEventListener('loadedmetadata', () => {
   // recordings from Chrome don't store a duration; this trick makes the browser work it out
   if (audio.duration === Infinity) {
     fixingDuration = true;
-    const done = () => { audio.removeEventListener('durationchange', done); audio.currentTime = 0; fixingDuration = false; updatePlayUI(); };
+    const done = () => { audio.removeEventListener('durationchange', done); fixingDuration = false; audio.currentTime = pendingSeek ?? 0; pendingSeek = null; updatePlayUI(); };
     audio.addEventListener('durationchange', done); audio.currentTime = 1e101;
-  }
+  } else if (pendingSeek != null) { audio.currentTime = pendingSeek; pendingSeek = null; }
   updatePlayUI();
 });
 function updatePlayUI() {
-  const d = durMs();
+  updateMini();
+  if (!cur) return;
+  const mine = isMine(), d = durMs(), pos = mine && !fixingDuration ? audio.currentTime * 1000 : 0;
   $('#seek').max = Math.max(1000, Math.round(d));
-  if (!seeking && !fixingDuration) $('#seek').value = Math.round(audio.currentTime * 1000) || 0;
-  $('#pos').textContent = fmt(fixingDuration ? 0 : audio.currentTime * 1000);
+  if (!seeking) $('#seek').value = Math.round(pos) || 0;
+  $('#pos').textContent = fmt(pos);
   $('#dur').textContent = fmt(d);
-  $('#playBtn').innerHTML = audio.paused ? I.play : I.pause;
-  $('#playBtn').setAttribute('aria-label', audio.paused ? 'Play' : 'Pause');
-  if (!fixingDuration) highlight(audio.currentTime * 1000);
+  const playing = mine && !audio.paused;
+  $('#playBtn').innerHTML = playing ? I.pause : I.play;
+  $('#playBtn').setAttribute('aria-label', playing ? 'Pause' : 'Play');
+  if (mine && !fixingDuration) highlight(pos);
 }
 ['timeupdate', 'play', 'pause', 'ended', 'durationchange'].forEach(ev => audio.addEventListener(ev, updatePlayUI));
 let lastActive = {};
@@ -940,23 +1092,68 @@ function highlight(ms) {
     lastActive[key] = id;
   }
 }
-function seekTo(ms) {
+async function seekTo(ms) {
   if (rec) { toast('You can jump to moments after you stop recording'); return; }
   if (!cur.hasAudio) return;
   if (!cur.audioLocal) { toast('Download the audio first'); return; }
-  audio.currentTime = Math.max(0, ms / 1000 - 1);   // start 1s early for context
+  if (!await ensureMine()) return;
+  setPos(Math.max(0, ms / 1000 - 1));   // start 1s early for context
   audio.play().catch(() => {});
 }
-$('#playBtn').addEventListener('click', () => audio.paused ? audio.play().catch(() => {}) : audio.pause());
-$('#back10').addEventListener('click', () => { audio.currentTime = Math.max(0, audio.currentTime - 10); });
-$('#fwd10').addEventListener('click', () => { audio.currentTime = Math.min(durMs() / 1000, audio.currentTime + 10); });
+const skip = sec => setPos(Math.min(Math.max(0, audio.currentTime + sec), playerDur() / 1000 || Infinity));
+$('#playBtn').addEventListener('click', async () => { if (!await ensureMine()) return; audio.paused ? audio.play().catch(() => {}) : audio.pause(); });
+$('#back10').addEventListener('click', async () => { if (await ensureMine()) skip(-10); });
+$('#fwd10').addEventListener('click', async () => { if (await ensureMine()) skip(10); });
 $('#seek').addEventListener('input', () => { seeking = true; $('#pos').textContent = fmt(+$('#seek').value); });
-$('#seek').addEventListener('change', () => { audio.currentTime = +$('#seek').value / 1000; seeking = false; });
+$('#seek').addEventListener('change', async () => { const v = +$('#seek').value / 1000; seeking = false; if (await ensureMine()) setPos(v); });
 const SPEEDS = [1, 1.25, 1.5, 2, 0.75];
 $('#speedBtn').addEventListener('click', () => {
   const i = (SPEEDS.indexOf(audio.playbackRate) + 1) % SPEEDS.length;
   audio.playbackRate = SPEEDS[i]; $('#speedBtn').textContent = SPEEDS[i] + '×';
 });
+
+/* ---------- mini player (keeps going when you leave the recording) ---------- */
+function placeMini() {
+  const m = $('#mini');
+  if (!$('#home').hidden) { if (m.parentElement !== $('#home')) $('#home').appendChild(m); }
+  else { const c = $('#session .composer'); if (m.nextElementSibling !== c) c.before(m); }
+}
+function updateMini() {
+  const show = !!player.sid && !rec && (audio.currentTime > 0 || !audio.paused) && (!$('#home').hidden || !isMine());
+  const m = $('#mini');
+  if (m.hidden === !show && !show) { document.body.classList.remove('mini-on'); return; }
+  m.hidden = !show; document.body.classList.toggle('mini-on', show && !$('#home').hidden);
+  if (!show) return;
+  placeMini();
+  const d = playerDur(), pos = audio.currentTime * 1000;
+  $('#mpTitle').textContent = player.title || 'Recording';
+  $('#mpTime').textContent = `${fmt(pos)} / ${fmt(d)}${audio.playbackRate !== 1 ? ' · ' + audio.playbackRate + '×' : ''}`;
+  $('#mpProg').style.width = d ? Math.min(100, pos / d * 100) + '%' : '0';
+  $('#mpPlay').innerHTML = audio.paused ? I.play : I.pause;
+  $('#mpPlay').setAttribute('aria-label', audio.paused ? 'Play' : 'Pause');
+}
+$('#mpPlay').addEventListener('click', () => audio.paused ? audio.play().catch(() => {}) : audio.pause());
+$('#mpBack').addEventListener('click', () => skip(-10));
+$('#mpFwd').addEventListener('click', () => skip(10));
+$('#mpClose').addEventListener('click', clearPlayer);
+$('#mpOpen').addEventListener('click', () => { if (player.sid) location.hash = 's=' + encodeURIComponent(player.sid); });
+
+/* lock screen / headphones / keyboard media keys */
+function setMediaSession() {
+  if (!('mediaSession' in navigator) || !player.sid) return;
+  try {
+    navigator.mediaSession.metadata = new MediaMetadata({ title: player.title || 'Recording', artist: 'Recall',
+      artwork: [{ src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' }] });
+  } catch {}
+}
+if ('mediaSession' in navigator) {
+  const on = (a, f) => { try { navigator.mediaSession.setActionHandler(a, f); } catch {} };
+  on('play', () => audio.play().catch(() => {}));
+  on('pause', () => audio.pause());
+  on('seekbackward', d => skip(-(d?.seekOffset || 10)));
+  on('seekforward', d => skip(d?.seekOffset || 10));
+  on('seekto', d => { if (d?.seekTime != null) setPos(d.seekTime); });
+}
 document.addEventListener('keydown', e => {
   if ($('#session').hidden || rec) return;
   if (e.target.matches('input,textarea,[contenteditable]')) return;
@@ -1083,7 +1280,7 @@ function rms(a) { let s = 0; for (let i = 0; i < a.length; i += 8) s += a[i] * a
 async function transcribeRecording() {
   if (!cur || rec || TX.job) return;
   if (!cur.hasAudio || !cur.audioLocal) { toast('Download the audio first'); return; }
-  if (cur.fullTranscript?.length && cur.fullLang === cur.lang && !confirm('Redo the full transcript? Your live transcript stays as it is.')) return;
+  if (cur.fullTranscript?.length && cur.fullLang === cur.lang && !confirm('Make the full transcript again? Your live transcript stays as it is.')) return;
   const s = cur, job = TX.job = { s, cancelled: false, msg: 'Preparing audio…', frac: 0 };
   const oldTranscript = s.fullTranscript || [];
   s.fullTranscript = s.fullTranscript || [];
@@ -1210,7 +1407,7 @@ $('#menuList [data-act=delete]').innerHTML = `${I.trash} Delete recording`;
 $('#moreBtn').addEventListener('click', e => { e.stopPropagation(); $('#menuList').hidden = !$('#menuList').hidden; });
 document.addEventListener('click', e => { if (!e.target.closest('.menu')) $('#menuList').hidden = true; });
 function toMarkdown(s) {
-  const L = [`# ${s.title}`, '', `${dateStr(s.createdAt)} · ${fmt(s.duration)}`, ''];
+  const L = [`# ${s.title}`, '', [s.folder ? `Subject: ${s.folder}` : '', dateStr(s.createdAt), fmt(s.duration), langName(s.lang || settings.lang)].filter(Boolean).join(' · '), ''];
   L.push('## My notes', '');
   if (!s.notes.length) L.push('_No notes_');
   for (const n of s.notes) L.push(`- ${n.t != null ? `[${fmt(n.t)}] ` : ''}${n.star ? '★ ' : ''}${n.text.replace(/\n/g, '\n  ')}`);
@@ -1237,13 +1434,13 @@ $('#menuList').addEventListener('click', async e => {
     const blob = await DB.getAudio(cur.id); if (blob) download(blob, fileSafe(cur.title) + '.' + extFor(blob.type));
   } else if (act === 'freeaudio') {
     if (!confirm('Remove the audio from this device? It stays in your Google Drive and you can download it again.')) return;
-    audio.pause(); await DB.delAudio(cur.id); await patchLocal(cur.id, { audioLocal: false });
+    if (player.sid === cur.id) clearPlayer(); await DB.delAudio(cur.id); await patchLocal(cur.id, { audioLocal: false });
     await loadAudio(); renderControls(); toast('Removed from this device');
   } else if (act === 'delete') {
     if (rec) return toast('Stop recording first');
     if (TX.job && TX.job.s === cur) return toast('Cancel the transcription first');
     if (!confirm(`Delete “${cur.title}”?` + (cur.driveJsonId ? ' It will also be moved to the bin in your Google Drive.' : ''))) return;
-    const s = cur; audio.pause();
+    const s = cur; if (player.sid === s.id) clearPlayer();
     if (s.driveJsonId) {
       await patchLocal(s.id, { pendingDelete: true }); await DB.delAudio(s.id).catch(() => {});
       cur = null; location.hash = '';
@@ -1343,6 +1540,24 @@ const Drive = {
       x.send(blob);
     });
   },
+  async subfolder(parent, name) {
+    const cache = ls.get('subfolders', {}), key = parent + '/' + name;
+    if (cache[key]) return cache[key];
+    const q = encodeURIComponent(`name='${name.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}' and mimeType='application/vnd.google-apps.folder' and '${parent}' in parents and trashed=false`);
+    let id = (await (await this.api(`files?q=${q}&fields=files(id)`)).json()).files?.[0]?.id;
+    if (!id) id = (await (await this.api('files?fields=id', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, mimeType: 'application/vnd.google-apps.folder', parents: [parent] }) })).json()).id;
+    cache[key] = id; ls.set('subfolders', cache); return id;
+  },
+  async listMd() {
+    let out = [], pageToken = '';
+    do {
+      const q = encodeURIComponent(`appProperties has { key='kind' and value='md' } and trashed=false`);
+      const j = await (await this.api(`files?q=${q}&pageSize=1000&fields=nextPageToken,files(id,name,appProperties,parents)${pageToken ? '&pageToken=' + pageToken : ''}`)).json();
+      out = out.concat(j.files || []); pageToken = j.nextPageToken || '';
+    } while (pageToken);
+    return out;
+  },
   trash(id) { return this.api(`files/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ trashed: true }) }); },
 };
 
@@ -1357,8 +1572,8 @@ function setSyncUI(state, extra) {
 }
 const fileBase = s => `${new Date(s.createdAt).toISOString().slice(0, 10)} ${fileSafe(s.title)}`;
 function sessionData(s) {
-  const { id, title, createdAt, updatedAt, duration, mimeType, lang, notes, transcript, fullTranscript, hasAudio } = s;
-  return { app: 'recall', v: 1, id, title, createdAt, updatedAt, duration, mimeType, lang, notes, transcript, fullTranscript: fullTranscript || [], hasAudio };
+  const { id, title, createdAt, updatedAt, duration, mimeType, lang, notes, transcript, fullTranscript, hasAudio, folder, fullLang } = s;
+  return { app: 'recall', v: 1, id, title, createdAt, updatedAt, duration, mimeType, lang, notes, transcript, fullTranscript: fullTranscript || [], hasAudio, folder: folder || '', fullLang: fullLang || '' };
 }
 async function syncAll(interactive = true) {
   if (syncing) return;
@@ -1369,7 +1584,7 @@ async function syncAll(interactive = true) {
     await Drive.auth(interactive);           // must be first (sign-in pop-up needs your tap)
     await flushSave();
     const folder = await Drive.folder();
-    const files = await Drive.list(folder);
+    const files = (await Drive.list(folder)).concat(await Drive.listMd().catch(() => []));
     const remote = {};
     for (const f of files) { const p = f.appProperties || {}; if (!p.sid) continue; (remote[p.sid] ||= {})[p.kind] = f; }
     const local = await DB.all(), seen = new Set();
@@ -1378,18 +1593,19 @@ async function syncAll(interactive = true) {
       if (s.recording || (rec && cur?.id === s.id)) continue;
       const r = remote[s.id] || {};
       if (s.pendingDelete) {
-        for (const f of [r.json, r.audio]) if (f) await Drive.trash(f.id);
+        for (const f of [r.json, r.audio, r.md]) if (f) await Drive.trash(f.id);
         await removeLocal(s.id); continue;
       }
       if (!r.json) {
         if (s.driveJsonId && s.driveFolderId === folder) { await removeLocal(s.id); if (cur?.id === s.id) changedOpen = 'deleted'; continue; }  // deleted on another device
-        await pushSession(s, folder, null, r.audio); up++;
+        await pushSession(s, folder, null, r.audio, false, r.md); up++;
       } else {
         const rUpd = Number(r.json.appProperties?.updatedAt || 0);
-        if ((s.updatedAt || 0) > rUpd) { await pushSession(s, folder, r.json, r.audio); up++; }
+        if ((s.updatedAt || 0) > rUpd) { await pushSession(s, folder, r.json, r.audio, false, r.md); up++; }
         else if (rUpd > (s.updatedAt || 0)) { await pullSession(r.json, folder, s, r.audio); down++; if (cur?.id === s.id) changedOpen = true; }
         else if (s.hasAudio && s.audioLocal && !r.audio) { await pushSession(s, folder, r.json, null, true); up++; }
         else await patchLocal(s.id, { driveJsonId: r.json.id, driveFolderId: folder, driveAudioId: r.audio?.id || null });
+        if (rUpd <= (s.updatedAt || 0) && !r.md) await pushMd(s, folder, null);          // readable copy for older recordings
       }
     }
     for (const sid in remote) if (!seen.has(sid) && remote[sid].json) { await pullSession(remote[sid].json, folder, null, remote[sid].audio); down++; }
@@ -1405,7 +1621,22 @@ async function syncAll(interactive = true) {
     else if (cur) renderControls();
   }
 }
-async function pushSession(s, folder, rJson, rAudio, audioOnly) {
+// A readable Markdown copy of each recording, filed by subject: "Recall Notes/<Folder>/<date> <title>.md".
+// This is what Claude (or anything else) can read from your Drive.
+async function pushMd(s, root, rMd, retry = true) {
+  try { return await pushMdOnce(s, root, rMd); }
+  catch (e) { if (!retry) throw e; ls.del('subfolders'); return pushMd(s, root, rMd, false); }   // a cached folder may have been deleted in Drive
+}
+async function pushMdOnce(s, root, rMd) {
+  const dir = await Drive.subfolder(root, cleanFolder(s.folder) || 'No folder');
+  const meta = { name: fileBase(s) + '.md', appProperties: { sid: s.id, kind: 'md' } };
+  const blob = new Blob([toMarkdown(s)], { type: 'text/markdown' });
+  if (rMd) {
+    const move = rMd.parents && !rMd.parents.includes(dir) ? `&addParents=${dir}&removeParents=${rMd.parents.join(',')}` : '';
+    await Drive.multipart('PATCH', `https://www.googleapis.com/upload/drive/v3/files/${rMd.id}?uploadType=multipart&fields=id${move}`, meta, blob);
+  } else await Drive.multipart('POST', 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', { ...meta, parents: [dir], mimeType: 'text/markdown' }, blob);
+}
+async function pushSession(s, folder, rJson, rAudio, audioOnly, rMd) {
   const fields = { driveFolderId: folder };
   if (!audioOnly) {
     const meta = { name: fileBase(s) + '.json', appProperties: { sid: s.id, kind: 'json', updatedAt: String(s.updatedAt) } };
@@ -1414,6 +1645,7 @@ async function pushSession(s, folder, rJson, rAudio, audioOnly) {
       ? await Drive.multipart('PATCH', `https://www.googleapis.com/upload/drive/v3/files/${rJson.id}?uploadType=multipart&fields=id`, meta, blob)
       : await Drive.multipart('POST', 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', { ...meta, parents: [folder], mimeType: 'application/json' }, blob);
     fields.driveJsonId = f.id;
+    await pushMd(s, folder, rMd);
   }
   if (rAudio) fields.driveAudioId = rAudio.id;
   else if (s.hasAudio && s.audioLocal) {
@@ -1501,7 +1733,7 @@ $('#disconnectBtn').addEventListener('click', () => {
    START
    ========================================================= */
 (async function init() {
-  $('#settingsBtn').innerHTML = I.cog; $('#importBtn').innerHTML = `${I.upload}<span class="txt">Import</span>`; $('#backBtn').innerHTML = I.back; $('#moreBtn').innerHTML = I.more;
+  $('#folderIcon').innerHTML = I.folder; $('#settingsBtn').innerHTML = I.cog; $('#importBtn').innerHTML = `${I.upload}<span class="txt">Import</span>`; $('#backBtn').innerHTML = I.back; $('#moreBtn').innerHTML = I.more;
   $('#pauseBtn').innerHTML = I.pause; $('#stopBtn').innerHTML = `${I.stop}<span class="txt">Stop</span>`;
   $('#markBtn').innerHTML = `${I.star}<span class="txt">Mark</span>`;
   try { await DB.open(); } catch (e) { document.body.innerHTML = '<p style="padding:24px">Recall can’t store data in this browser (private mode?). Please open it in a normal window.</p>'; return; }
