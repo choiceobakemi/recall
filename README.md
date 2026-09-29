@@ -54,12 +54,24 @@ The sign-in lasts about an hour. After that, tap the cloud button to sync again.
 
 ---
 
+## Transcribe a recording afterwards
+
+Open a recording, go to the **Transcript** tab and tap **Transcribe audio**. A speech model (Whisper) turns the whole recording into a timestamped transcript. It runs on your own device and is free.
+
+- **Choose the language** right on the recording's Transcript tab. Tap the language name next to the button (for example *English (UK) ▾*) and pick *Русский*. Each recording keeps its own language, and the one you picked last becomes the default for new recordings. If you change it after making a full transcript, a **Redo** button appears.
+- **Choose a model** in Settings. *Balanced* is the default. *Most accurate* gives better text (especially for Russian) but is a bigger download, so it's best used on your Mac.
+- **The first run downloads the model.** After that it works offline.
+- **It takes a while:** several minutes per hour of audio on a laptop, longer on a phone. Keep Recall open until it finishes. You can cancel, and it keeps whatever it has done so far.
+- **Import** (the ⬆ button on the home screen) brings in audio files, several at once if you like.
+  - **From Voice Memos on iPhone:** open the memo, then Share (or ⋯) → **Save to Files**. Then in Recall tap ⬆ and pick it. iPhone doesn't let web apps appear in the Share menu, so this two-step route is the shortest.
+  - **On your Mac:** drag a memo straight out of the Voice Memos app and drop it anywhere on the Recall window.
+
 ## Tips
 
-- **Transcript language:** set it in Settings. Choose *Русский* for lectures in Russian and *English* for English ones.
+- **Transcript language:** pick it on the recording's Transcript tab. Choose *Русский* for lectures in Russian and *English* for English ones. While recording, changing it switches the live transcript straight away.
 - **Best transcript quality:** Chrome on your laptop, with the laptop reasonably close to the speaker. Live transcription needs internet, but the audio records fine offline.
-- **On phones**, keep Recall open with the screen on. It asks the phone to stay awake, but if you switch apps, iPhones pause the microphone. On some Android phones, the live transcript and the recorder can't use the microphone at the same time. The audio still records; only the transcript stops.
+- **On phones**, keep Recall open with the screen on. iPhones don't let any website use the microphone in the background, so if you switch apps, Recall pauses and resumes when you come back. It adds a note where the gap is, so your timestamps stay correct. For long recordings where you must switch apps, record in Voice Memos instead. On some Android phones, the live transcript and the recorder can't use the microphone at the same time. The audio still records; only the transcript stops.
 - **Storage:** 1 hour is about 30 MB. Google Drive's free 15 GB holds hundreds of hours. To free up space on your phone, open a recording and choose **⋯ → Remove audio from this device**. It stays in Drive and can be downloaded again.
 - **Exporting:** **⋯ → Download as text (.md)** or **Copy notes & transcript** gives you a clean, timestamped version. You can paste it into anything, or into Claude to summarise.
 - **If the app crashes or the tab closes mid-recording,** the audio saved so far is recovered automatically the next time you open Recall.
-- **To update the app later,** upload the new `index.html` to the same GitHub repo.
+- **To update the app later,** upload the new `index.html` and `sw.js` to the same GitHub repo, then fully close and reopen Recall.
