@@ -66,6 +66,18 @@ Open a recording, go to the **Transcript** tab and tap **Transcribe audio**. A s
   - **From Voice Memos on iPhone:** open the memo, then Share (or ⋯) → **Save to Files**. Then in Recall tap ⬆ and pick it. iPhone doesn't let web apps appear in the Share menu, so this two-step route is the shortest.
   - **On your Mac:** drag a memo straight out of the Voice Memos app and drop it anywhere on the Recall window.
 
+## Folders (one per subject)
+
+- On the home screen, tap **+ New folder** and name it after the subject, for example *Thermodynamics*.
+- When a folder is selected, new recordings and imports go straight into it.
+- To move a recording, tap the folder name under its title.
+- With a folder selected you can also **Download all as text** (every recording in that subject in one file), **Rename** it or **Delete** it. Deleting a folder keeps the recordings and moves them to *No folder*.
+- **For Claude:** when Drive sync is on, each recording is also saved as a readable text file at **Google Drive → Recall Notes → *Subject name* → *date title*.md**, with your notes and both transcripts. In a Claude chat for that subject, ask Claude to read the latest ones from *Recall Notes/Subject* in your Drive.
+
+## Listening back
+
+Playback keeps going when you leave a recording. A small player appears at the bottom with play/pause and ±10 s, and tapping its title takes you back to that recording. On iPhone and Mac it also shows up in the lock screen and Control Centre controls.
+
 ## Tips
 
 - **Transcript language:** pick it on the recording's Transcript tab. Choose *Русский* for lectures in Russian and *English* for English ones. While recording, changing it switches the live transcript straight away.
