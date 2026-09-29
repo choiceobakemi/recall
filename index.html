@@ -125,6 +125,14 @@ svg{width:20px;height:20px;flex:none}
 @media (hover:none){.ndel{opacity:.5}}
 .interim{color:var(--muted);font-style:italic;padding:4px 12px}
 .hint{color:var(--muted);font-size:14px;padding:8px 12px}
+.hint .btn{margin-top:10px}
+.mini{font-size:12px;font-weight:600;text-transform:none;letter-spacing:0;color:var(--accent);background:var(--accent-soft);border-radius:8px;padding:3px 9px}
+.txjob{margin:2px 8px 10px;padding:12px;border-radius:12px;background:var(--surface-2)}
+.txbar{height:6px;border-radius:99px;background:var(--line);overflow:hidden}
+.txbar span{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.txrow{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;color:var(--muted)}
+.txrow span{flex:1}
+.txrow button{font-size:13px;font-weight:600;color:var(--rec)}
 
 .composer{display:flex;align-items:flex-end;gap:8px;padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
 .composer textarea{flex:1;resize:none;min-height:46px;max-height:140px;border-radius:14px;border:1px solid var(--line);background:var(--surface);padding:12px 14px;outline:none;line-height:1.4}
@@ -139,6 +147,7 @@ svg{width:20px;height:20px;flex:none}
   .bar h1{font-size:20px}
   .mark .txt{display:none}
   #pauseBtn .txt{display:none}
+  #importBtn .txt{display:none}
   #pauseBtn{padding:0 11px}
   #seek{order:10;flex-basis:100%;margin-top:4px}
   .play-row .time{min-width:0}
@@ -177,6 +186,8 @@ details summary{cursor:pointer;font-weight:600;font-size:14px;margin:6px 0}
 <section id="home" class="view">
   <header class="bar">
     <h1>Recall</h1>
+    <button id="importBtn" class="icon-btn" title="Import an audio file (e.g. from Voice Memos)" aria-label="Import audio"></button>
+    <input id="fileIn" type="file" accept="audio/*,.m4a,.mp3,.wav,.aac,.webm,.ogg,.opus,.flac" hidden>
     <button id="syncBtn" class="icon-btn" title="Sync with Google Drive"></button>
     <button id="settingsBtn" class="icon-btn" title="Settings" aria-label="Settings"></button>
   </header>
@@ -195,6 +206,7 @@ details summary{cursor:pointer;font-weight:600;font-size:14px;margin:6px 0}
       <div id="menuList" class="menu-list" hidden>
         <button data-act="copy"></button>
         <button data-act="md"></button>
+        <button data-act="transcribe"></button>
         <button data-act="audio"></button>
         <button data-act="freeaudio"></button>
         <button data-act="delete" class="danger"></button>
@@ -239,7 +251,7 @@ details summary{cursor:pointer;font-weight:600;font-size:14px;margin:6px 0}
   </div>
   <div class="panes" id="panes" data-tab="notes">
     <div class="pane" id="notesPane"><h2>My notes <span id="noteCount"></span></h2><ol class="list" id="notesList"></ol></div>
-    <div class="pane" id="transcriptPane"><h2>Transcript <span id="tLang"></span></h2><div id="transcriptList"></div><div id="interim" class="interim"></div></div>
+    <div class="pane" id="transcriptPane"><h2>Transcript <span><button id="txBtn" class="mini" hidden>Transcribe audio</button> <span id="tLang"></span></span></h2><div id="txJob" class="txjob" hidden><div class="txbar"><span id="txBar"></span></div><div class="txrow"><span id="txMsg"></span><button id="txCancel">Cancel</button></div></div><div id="transcriptList"></div><div id="interim" class="interim"></div></div>
   </div>
 
   <footer class="composer">
@@ -257,6 +269,15 @@ details summary{cursor:pointer;font-weight:600;font-size:14px;margin:6px 0}
     <label class="check"><input type="checkbox" id="setTranscript"> Transcribe speech while recording</label>
     <div class="field"><label for="setLang">Language being spoken</label><select id="setLang"></select></div>
     <p class="small" id="srSupport"></p>
+
+    <h3>Transcribe a recording</h3>
+    <div class="field"><label for="setModel">Speech model (runs on this device, free)</label>
+      <select id="setModel">
+        <option value="tiny">Fast: small download (~40 MB), rougher text</option>
+        <option value="base">Balanced (~80 MB), recommended</option>
+        <option value="small">Most accurate (~250 MB), best on a laptop</option>
+      </select></div>
+    <p class="small">Turns a finished recording (or an imported Voice Memo) into a timestamped transcript. The model downloads once, then works offline. It takes a while: expect several minutes per hour of audio on a laptop, and longer on a phone. Keep Recall open until it finishes.</p>
 
     <h3>Google Drive sync</h3>
     <p class="small" id="driveState"></p>
@@ -318,6 +339,7 @@ const I = {
   doc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>',
   down:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-5-5 5 5 5-5M5 21h14"/></svg>',
   trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>',
+  upload:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3m-5 5 5-5 5 5M5 21h14"/></svg>',
   broom:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M6 16l4-10 4 10M8 12h4"/></svg>',
 };
 
@@ -483,7 +505,7 @@ $('#newBtn').addEventListener('click', async () => {
 async function openSession(id) {
   if (cur && cur.id === id && !$('#session').hidden) return;
   if (cur) await flushSave();
-  const s = await DB.get(id);
+  const s = (TX.job && TX.job.s.id === id) ? TX.job.s : await DB.get(id);
   if (!s || s.pendingDelete) { history.replaceState(null, '', location.pathname); return goHome(); }
   cur = s; await showSession();
 }
@@ -504,6 +526,9 @@ function renderControls() {
   $('#liveDot').hidden = !recording;
   $('#pauseBtn').hidden = $('#stopBtn').hidden = !recording;
   $('#caption').hidden = !recording || !settings.transcript;
+  $('#txBtn').hidden = !(hasLocal && !recording && !TX.job);
+  $('#menuList [data-act=transcribe]').hidden = !(hasLocal && !recording && !TX.job);
+  showTxJob();
   $('#recPanel').classList.toggle('paused', !!rec?.paused);
   if (recording) {
     $('#pauseBtn').innerHTML = rec.paused ? `${I.play}<span class="txt">Resume</span>` : `${I.pause}<span class="txt">Pause</span>`;
@@ -600,6 +625,8 @@ function tHtml(x) {
 function renderTranscript() {
   const el = $('#transcriptList');
   if (cur.transcript.length) el.innerHTML = cur.transcript.map(tHtml).join('');
+  else if (TX.job && TX.job.s === cur) el.innerHTML = '';
+  else if (cur.hasAudio && cur.audioLocal && !rec) el.innerHTML = `<p class="hint">No transcript yet. Recall can write one from the recording, on this device and for free.<br><button class="btn primary" data-tx>Transcribe the recording</button></p>`;
   else if (!SR) el.innerHTML = `<p class="hint">Live transcript isn't supported in this browser. Use Chrome or Safari (it works best on a laptop in Chrome).</p>`;
   else if (!settings.transcript) el.innerHTML = `<p class="hint">Live transcript is turned off in Settings.</p>`;
   else el.innerHTML = `<p class="hint">${cur.hasAudio ? 'No transcript for this recording.' : 'What’s said will be written here while you record.'}</p>`;
@@ -901,10 +928,211 @@ document.addEventListener('keydown', e => {
 });
 
 /* =========================================================
+   TRANSCRIBE A RECORDING (Whisper, runs on this device, free)
+   ========================================================= */
+const TJS_URL = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.0/dist/transformers.min.js';
+const WORKER_SRC = `
+let T = null;
+async function lib() {
+  if (!T) {
+    try { T = await import('${TJS_URL}'); }
+    catch (e) { throw new Error('Could not download the transcription engine. Check your internet connection (only needed the first time). ' + ((e && e.message) || '')); }
+    T.env.allowLocalModels = false;
+  }
+  return T;
+}
+let asr = null, loadedKey = '', device = '';
+async function hasGPU() {
+  try { return !!(self.navigator && navigator.gpu && await navigator.gpu.requestAdapter()); } catch (e) { return false; }
+}
+async function load(size, noGPU) {
+  const key = size + (noGPU ? ':cpu' : '');
+  if (asr && loadedKey === key) return;
+  if (asr) { try { await asr.dispose(); } catch (e) {} asr = null; }
+  const { pipeline } = await lib();
+  const gpu = !noGPU && await hasGPU();
+  const tries = [];
+  for (const repo of ['onnx-community/whisper-' + size, 'Xenova/whisper-' + size]) {
+    if (gpu) tries.push({ repo, device: 'webgpu', dtype: { encoder_model: 'fp32', decoder_model_merged: 'q4' } });
+    tries.push({ repo, device: 'wasm', dtype: 'q8' });
+  }
+  let lastErr;
+  for (const t of tries) {
+    try {
+      asr = await pipeline('automatic-speech-recognition', t.repo, { device: t.device, dtype: t.dtype, progress_callback: p => self.postMessage({ type: 'progress', p }) });
+      loadedKey = key; device = t.device; self.postMessage({ type: 'loaded', device: t.device, repo: t.repo }); return;
+    } catch (e) { lastErr = e; }
+  }
+  throw lastErr || new Error('Could not load the speech model');
+}
+async function run(m) {
+  return asr(m.audio, { language: m.language || null, task: 'transcribe', return_timestamps: true, chunk_length_s: 30, stride_length_s: 5 });
+}
+self.onmessage = async ({ data: m }) => {
+  try {
+    if (m.type === 'load') { await load(m.size); self.postMessage({ type: 'ready' }); }
+    else if (m.type === 'run') {
+      let out;
+      try { out = await run(m); }
+      catch (e) { if (device !== 'webgpu') throw e; await load(m.size, true); out = await run(m); }   // graphics chip failed: fall back to CPU
+      self.postMessage({ type: 'result', chunks: out.chunks || [{ timestamp: [0, null], text: out.text }] });
+    }
+  } catch (e) { self.postMessage({ type: 'error', message: String((e && e.message) || e) }); }
+};`;
+
+const TX = { worker: null, job: null, pending: null };
+function txWorker() {
+  if (!TX.worker) {
+    TX.worker = new Worker(URL.createObjectURL(new Blob([WORKER_SRC], { type: 'text/javascript' })), { type: 'module' });
+    TX.worker.addEventListener('message', ({ data }) => {
+      if (data.type === 'progress') return TX.pending?.onProgress?.(data.p);
+      if (data.type === 'loaded') { TX.device = data.device; return; }
+      const p = TX.pending; TX.pending = null; if (!p) return;
+      data.type === 'error' ? p.reject(new Error(data.message)) : p.resolve(data);
+    });
+    TX.worker.addEventListener('error', e => {
+      e.preventDefault?.();
+      const p = TX.pending; TX.pending = null; TX.worker?.terminate(); TX.worker = null;
+      p?.reject(new Error('Could not load the transcription engine. Check your internet connection (needed the first time only).'));
+    });
+  }
+  return TX.worker;
+}
+function txCall(msg, onProgress) {
+  return new Promise((resolve, reject) => {
+    const w = txWorker();
+    TX.pending = { resolve, reject, onProgress };
+    w.postMessage(msg, msg.audio ? [msg.audio.buffer] : []);
+  });
+}
+function txCancel() {
+  if (!TX.job) return;
+  TX.job.cancelled = true;
+  if (TX.worker) { TX.worker.terminate(); TX.worker = null; }
+  TX.pending?.reject(new Error('cancelled')); TX.pending = null;
+}
+function setTx(msg, frac) { if (!TX.job) return; TX.job.msg = msg; TX.job.frac = frac; showTxJob(); }
+function showTxJob() {
+  const on = !!(TX.job && cur && TX.job.s === cur);
+  $('#txJob').hidden = !on;
+  if (on) { $('#txMsg').textContent = TX.job.msg || ''; $('#txBar').style.width = Math.round((TX.job.frac || 0) * 100) + '%'; }
+}
+async function decodeTo16k(blob) {
+  const buf = await blob.arrayBuffer();
+  let ab;
+  try { ab = await new OfflineAudioContext(1, 16000, 16000).decodeAudioData(buf.slice(0)); }   // decodes and resamples to 16 kHz
+  catch {
+    const Ctx = window.AudioContext || window.webkitAudioContext, ac = new Ctx();
+    try { ab = await new Promise((res, rej) => ac.decodeAudioData(buf.slice(0), res, rej)); } finally { ac.close?.(); }
+  }
+  let data = ab.getChannelData(0);
+  if (ab.numberOfChannels > 1) {
+    const b = ab.getChannelData(1), m = new Float32Array(data.length);
+    for (let i = 0; i < m.length; i++) m[i] = (data[i] + b[i]) / 2;
+    data = m;
+  }
+  if (ab.sampleRate !== 16000) {   // simple resample fallback
+    const ratio = ab.sampleRate / 16000, out = new Float32Array(Math.floor(data.length / ratio));
+    for (let i = 0; i < out.length; i++) { const x = i * ratio, j = Math.floor(x), f = x - j; out[i] = data[j] * (1 - f) + (data[j + 1] || 0) * f; }
+    data = out;
+  }
+  return data;
+}
+const WHISPER_LANG = { en: 'english', ru: 'russian', fr: 'french', de: 'german', es: 'spanish', pt: 'portuguese', it: 'italian', zh: 'chinese', ar: 'arabic', tr: 'turkish' };
+const whisperLang = code => WHISPER_LANG[(code || '').slice(0, 2)] || null;
+// Whisper sometimes "hears" these in silence; drop them
+const TX_JUNK = /^(\[.*\]|\(.*\)|[♪\s.]+|thank you\.?|thanks for watching!?|thank you for watching\.?|please subscribe.*|субтитры.*|продолжение следует\.*|редактор субтитров.*|спасибо за просмотр.*)$/i;
+function rms(a) { let s = 0; for (let i = 0; i < a.length; i += 8) s += a[i] * a[i]; return Math.sqrt(s / (a.length / 8)); }
+
+async function transcribeRecording() {
+  if (!cur || rec || TX.job) return;
+  if (!cur.hasAudio || !cur.audioLocal) { toast('Download the audio first'); return; }
+  if (cur.transcript.length && !confirm('Replace the current transcript with a new one made from the recording? (It’s usually more complete than the live one.)')) return;
+  const s = cur, job = TX.job = { s, cancelled: false, msg: 'Preparing audio…', frac: 0 };
+  const oldTranscript = s.transcript;
+  setTab('transcript'); renderControls(); keepAwake(true);
+  let added = 0;
+  try {
+    const blob = await DB.getAudio(s.id);
+    if (!blob) throw new Error('Audio not found on this device');
+    const pcm = await decodeTo16k(blob);
+    if (job.cancelled) return;
+    const size = settings.txModel || 'base';
+    setTx('Loading speech model…', 0);
+    await txCall({ type: 'load', size }, p => {
+      if (p.status === 'progress_total' && p.total) setTx(`Downloading speech model (first time only)… ${Math.round(p.loaded / p.total * 100)}%`, p.loaded / p.total);
+      else if (p.status === 'progress' && p.total && !job.sawTotal) setTx(`Downloading speech model (first time only)… ${Math.round(p.progress || 0)}%`, (p.progress || 0) / 100);
+      if (p.status === 'progress_total') job.sawTotal = true;
+    });
+    s.lang = settings.lang; $('#tLang').textContent = (LANGS.find(l => l[0] === s.lang) || [0, s.lang])[1];
+    const SEG = 16000 * 60, total = pcm.length, lang = whisperLang(settings.lang);
+    s.transcript = []; if (cur === s) renderTranscript();
+    let last = '';
+    for (let off = 0; off < total && !job.cancelled; off += SEG) {
+      setTx(`Transcribing… ${fmt(off / 16)} of ${fmt(total / 16)}${TX.device === 'webgpu' ? ' (using graphics chip)' : ''}`, off / total);
+      const seg = pcm.slice(off, Math.min(total, off + SEG));
+      if (seg.length < 1600 || rms(seg) < 0.002) continue;          // skip silence
+      const r = await txCall({ type: 'run', audio: seg, language: lang, size });
+      for (const c of r.chunks) {
+        const text = (c.text || '').trim();
+        if (!text || TX_JUNK.test(text) || text === last) continue;
+        last = text;
+        const x = { id: uid(), t: Math.round(off / 16 + (c.timestamp?.[0] || 0) * 1000), text };
+        s.transcript.push(x); added++;
+        if (cur === s) {
+          const el = $('#transcriptList'); if (el.querySelector('.hint')) el.innerHTML = '';
+          el.insertAdjacentHTML('beforeend', tHtml(x));
+        }
+      }
+      s.updatedAt = Date.now(); await DB.put(s);
+    }
+    if (job.cancelled) return;
+    s.transcriptSource = 'whisper'; s.updatedAt = Date.now(); await DB.put(s);
+    toast(added ? 'Transcript ready' : 'No speech found in this recording', 3500);
+  } catch (e) {
+    if (!job.cancelled) toast('Transcription failed: ' + (e.message || e), 6000);
+    if (!added) s.transcript = oldTranscript;                       // put the old one back if nothing new came through
+  } finally {
+    if (job.cancelled) toast(added ? 'Stopped. Kept what was transcribed so far.' : 'Transcription cancelled', 3500);
+    if (job.cancelled && !added) s.transcript = oldTranscript;
+    s.updatedAt = Date.now(); await DB.put(s).catch(() => {});
+    TX.job = null; if (!rec) keepAwake(false);
+    if (cur === s) { renderTranscript(); renderControls(); scheduleAutoSync(); }
+  }
+}
+$('#txBtn').addEventListener('click', transcribeRecording);
+$('#txCancel').addEventListener('click', txCancel);
+$('#transcriptList').addEventListener('click', e => { if (e.target.closest('[data-tx]')) transcribeRecording(); });
+
+/* ---------- import an audio file (e.g. a Voice Memo) ---------- */
+$('#importBtn').addEventListener('click', () => $('#fileIn').click());
+$('#fileIn').addEventListener('change', async e => {
+  const f = e.target.files?.[0]; e.target.value = '';
+  if (!f) return;
+  const ext = (f.name.split('.').pop() || '').toLowerCase();
+  const type = f.type || ({ m4a: 'audio/mp4', mp3: 'audio/mpeg', wav: 'audio/wav', aac: 'audio/aac', webm: 'audio/webm', ogg: 'audio/ogg', opus: 'audio/ogg', flac: 'audio/flac' })[ext] || 'audio/mp4';
+  const blob = new Blob([f], { type });
+  const duration = await new Promise(res => {
+    const a = new Audio(), u = URL.createObjectURL(blob); let done = false;
+    const fin = v => { if (done) return; done = true; URL.revokeObjectURL(u); res(v); };
+    a.preload = 'metadata';
+    a.onloadedmetadata = () => { if (isFinite(a.duration)) fin(Math.round(a.duration * 1000)); else { a.ondurationchange = () => isFinite(a.duration) && fin(Math.round(a.duration * 1000)); a.currentTime = 1e101; } };
+    a.onerror = () => fin(0); setTimeout(() => fin(0), 8000); a.src = u;
+  });
+  if (!duration) { toast('That file couldn’t be opened as audio', 4000); return; }
+  const s = newSession();
+  Object.assign(s, { title: f.name.replace(/\.[^.]+$/, '') || s.title, createdAt: f.lastModified || Date.now(), duration, mimeType: type, hasAudio: true, audioLocal: true, imported: true });
+  await DB.putAudio(s.id, blob); await DB.put(s);
+  location.hash = 's=' + encodeURIComponent(s.id);
+  setTimeout(() => { setTab('transcript'); toast('Imported. Tap “Transcribe the recording” to get the text.', 4000); }, 300);
+});
+
+/* =========================================================
    MENU: export, delete
    ========================================================= */
 $('#menuList [data-act=copy]').innerHTML = `${I.copy} Copy notes & transcript`;
 $('#menuList [data-act=md]').innerHTML = `${I.doc} Download as text (.md)`;
+$('#menuList [data-act=transcribe]').innerHTML = `${I.doc} Transcribe the recording`;
 $('#menuList [data-act=audio]').innerHTML = `${I.down} Download audio`;
 $('#menuList [data-act=freeaudio]').innerHTML = `${I.broom} Remove audio from this device`;
 $('#menuList [data-act=delete]').innerHTML = `${I.trash} Delete recording`;
@@ -924,6 +1152,7 @@ $('#menuList').addEventListener('click', async e => {
   const b = e.target.closest('button'); if (!b) return;
   $('#menuList').hidden = true; await flushSave();
   const act = b.dataset.act;
+  if (act === 'transcribe') return transcribeRecording();
   if (act === 'copy') {
     try { await navigator.clipboard.writeText(toMarkdown(cur)); toast('Copied'); } catch { toast('Could not copy'); }
   } else if (act === 'md') {
@@ -936,6 +1165,7 @@ $('#menuList').addEventListener('click', async e => {
     await loadAudio(); renderControls(); toast('Removed from this device');
   } else if (act === 'delete') {
     if (rec) return toast('Stop recording first');
+    if (TX.job && TX.job.s === cur) return toast('Cancel the transcription first');
     if (!confirm(`Delete “${cur.title}”?` + (cur.driveJsonId ? ' It will also be moved to the bin in your Google Drive.' : ''))) return;
     const s = cur; audio.pause();
     if (s.driveJsonId) {
@@ -1159,6 +1389,7 @@ function openSettings() {
   $('#setLang').value = settings.lang;
   $('#setClient').value = settings.clientId;
   $('#setAuto').checked = settings.autoSync;
+  $('#setModel').value = settings.txModel || 'base';
   $('#originCode').textContent = location.origin;
   $('#srSupport').textContent = SR ? 'Uses your browser’s free built-in speech recognition. Needs internet. Works best in Chrome on a laptop; on phones it may be patchy — the audio always records either way.'
     : 'This browser has no built-in speech recognition. Try Chrome or Safari for live transcripts. Audio and notes still work.';
@@ -1174,6 +1405,7 @@ $('#closeSettings').addEventListener('click', () => $('#settingsDlg').close());
 $('#setTranscript').addEventListener('change', e => { settings.transcript = e.target.checked; saveSettings(); if (cur) renderTranscript(); });
 $('#setLang').addEventListener('change', e => { settings.lang = e.target.value; saveSettings(); });
 $('#setAuto').addEventListener('change', e => { settings.autoSync = e.target.checked; saveSettings(); });
+$('#setModel').addEventListener('change', e => { settings.txModel = e.target.value; saveSettings(); });
 $('#setClient').addEventListener('change', e => {
   const v = e.target.value.trim();
   if (v !== settings.clientId) { settings.clientId = v; settings.driveConnected = false; Drive.forget(); saveSettings(); if (v) Drive.loadGis().catch(() => {}); setSyncUI(); }
@@ -1193,7 +1425,7 @@ $('#disconnectBtn').addEventListener('click', () => {
    START
    ========================================================= */
 (async function init() {
-  $('#settingsBtn').innerHTML = I.cog; $('#backBtn').innerHTML = I.back; $('#moreBtn').innerHTML = I.more;
+  $('#settingsBtn').innerHTML = I.cog; $('#importBtn').innerHTML = `${I.upload}<span class="txt">Import</span>`; $('#backBtn').innerHTML = I.back; $('#moreBtn').innerHTML = I.more;
   $('#pauseBtn').innerHTML = I.pause; $('#stopBtn').innerHTML = `${I.stop}<span class="txt">Stop</span>`;
   $('#markBtn').innerHTML = `${I.star}<span class="txt">Mark</span>`;
   try { await DB.open(); } catch (e) { document.body.innerHTML = '<p style="padding:24px">Recall can’t store data in this browser (private mode?). Please open it in a normal window.</p>'; return; }
