@@ -114,6 +114,7 @@ svg{width:20px;height:20px;flex:none}
 .note.active,.tline.active{background:var(--accent-soft)}
 .note.star{background:var(--star-soft)}
 .note.star .ntext::before{content:"★ ";color:var(--star)}
+.note.auto .ntext{color:var(--muted);font-style:italic}
 .tchip{flex:none;font-variant-numeric:tabular-nums;font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:6px;padding:2px 6px;margin-top:2px}
 .tchip.none{visibility:hidden}
 .ntext,.ttext{flex:1;min-width:0;outline:none;white-space:pre-wrap;word-wrap:break-word;border-radius:6px;padding:1px 3px}
@@ -528,7 +529,7 @@ $('#title').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preven
 /* ---------- notes ---------- */
 function sortNotes() { const k = n => n.t == null ? Number.MAX_SAFE_INTEGER : n.t; cur.notes.sort((a, b) => k(a) - k(b)); }
 function noteHtml(n) {
-  return `<li class="note${n.star ? ' star' : ''}" data-id="${n.id}" data-t="${n.t ?? ''}">
+  return `<li class="note${n.star ? ' star' : ''}${n.auto ? ' auto' : ''}" data-id="${n.id}" data-t="${n.t ?? ''}">
     <button class="tchip${n.t == null ? ' none' : ''}" data-seek="${n.t ?? ''}">${n.t == null ? '--:--' : fmt(n.t)}</button>
     <div class="ntext" contenteditable="true" spellcheck="true">${esc(n.text)}</div>
     <button class="ndel" aria-label="Delete note">×</button></li>`;
@@ -656,6 +657,12 @@ async function startRecording() {
   };
   mr.onstop = finalizeRecording;
   mr.start(5000);
+  const track = stream.getAudioTracks()[0];
+  if (track) {
+    track.addEventListener('mute', () => autoPause());
+    track.addEventListener('unmute', () => autoResume());
+    track.addEventListener('ended', () => { if (rec && !rec.stopping) { stopRecording(); toast('The microphone was switched off, so the recording was saved.', 5000); } });
+  }
   cur.recording = true; cur.mimeType = rec.mime; cur.lang = settings.lang; touch();
   startMeter(stream); startTranscript(); keepAwake(true);
   rec.timer = setInterval(tick, 250); tick();
@@ -671,7 +678,8 @@ function tick() {
 function pauseResume() {
   if (!rec) return;
   if (rec.paused) {
-    rec.mr.resume(); rec.t0 = performance.now(); rec.paused = false; startTranscript();
+    rec.mr.resume(); rec.t0 = performance.now(); rec.paused = false;
+    rec.autoPaused = false; rec.tDisabled = false; rec.restarts = []; startTranscript();
   } else {
     rec.mr.pause(); rec.acc += performance.now() - rec.t0; rec.paused = true; stopTranscript();
   }
@@ -733,10 +741,31 @@ async function keepAwake(on) {
     else if (!on && wake) { await wake.release(); wake = null; }
   } catch {}
 }
+/* Phones cut the mic when you switch apps. Pause cleanly so note timestamps stay
+   lined up with the audio, then pick up again (with transcript) when you come back. */
+const IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const IS_MOBILE = IS_IOS || /Android/i.test(navigator.userAgent);
+function autoPause() {
+  if (!rec || rec.paused || rec.stopping) return;
+  pauseResume(); rec.autoPaused = true; rec.gapAt = elapsed();
+}
+function autoResume() {
+  if (!rec || !rec.autoPaused || rec.stopping || document.visibilityState !== 'visible') return;
+  const t = rec.gapAt;
+  pauseResume();
+  cur.notes.push({ id: uid(), t, text: 'Recording paused here while Recall was in the background', star: false, auto: true, at: Date.now() });
+  sortNotes(); renderNotes(); touch();
+  toast('Welcome back. Recording and transcript resumed.', 3500);
+}
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && rec) keepAwake(true);
-  if (document.visibilityState === 'hidden') flushSave();
+  if (document.visibilityState === 'hidden') { flushSave(); if (IS_MOBILE) autoPause(); }
+  else if (rec) {
+    keepAwake(true);
+    if (rec.autoPaused) setTimeout(autoResume, 400);          // give the phone a moment to hand the mic back
+    else if (!rec.paused && !rec.recog) { rec.tDisabled = false; startTranscript(); }
+  }
 });
+window.addEventListener('pagehide', () => { if (rec) { flushSave(); } });
 
 /* ---------- live transcript (browser speech recognition, free) ---------- */
 function startTranscript() {
