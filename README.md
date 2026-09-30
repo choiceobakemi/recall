@@ -72,7 +72,34 @@ Open a recording, go to the **Transcript** tab and tap **Transcribe audio**. A s
 - When a folder is selected, new recordings and imports go straight into it.
 - To move a recording, tap the folder name under its title.
 - With a folder selected you can also **Download all as text** (every recording in that subject in one file), **Rename** it or **Delete** it. Deleting a folder keeps the recordings and moves them to *No folder*.
-- **For Claude:** when Drive sync is on, each recording is also saved as a readable text file at **Google Drive → Recall Notes → *Subject name* → *date title*.md**, with your notes and both transcripts. In a Claude chat for that subject, ask Claude to read the latest ones from *Recall Notes/Subject* in your Drive.
+- **For Claude:** when Drive sync is on, each recording is also saved as a readable text file at **Google Drive → Recall Notes → *Subject name* → *date title*.md**, with your notes and both transcripts. Board photos are saved in the same folder. In a Claude chat for that subject, ask Claude to read the latest ones from *Recall Notes/Subject* in your Drive.
+
+## In class
+
+- **Timetable.** Your classes are already filled in under ⚙ Settings → Timetable (Mon & Thu Systems Engineering, Tue & Fri Experimental Data Processing, 12:30–15:30).
+  - During class, the red button shows the subject. Tap it and the recording is named "Systems Engineering · Lecture 6" and filed in that folder.
+  - Stop and start again after a break, and it becomes **Part 2** of the same lecture. Or just tap **Pause** during the break.
+  - Imported Voice Memos made during a class are filed the same way.
+- **★ Mark** saves an important moment.
+- **Photo** snaps the board or slides, pinned to that moment in the recording.
+  - On your phone it opens a camera inside Recall, so the recording keeps going.
+  - On the laptop it lets you pick an image or screenshot.
+- **Topic** starts a new section. Type the topic name first, or tap **Topic** and rename it after. Topics become headings in the notes, the transcript and the exported text.
+- **🔍 Search** (top right of a recording) finds a word in your notes and transcripts. Press Enter to jump from match to match; the audio moves there too.
+
+## After class
+
+- **Transcribe automatically.** On the laptop, the full transcript starts by itself when you stop recording. You can turn this on for your phone in Settings.
+- **Transcribe all.** With a subject folder selected, tap **Transcribe all** to queue every recording that doesn't have a full transcript yet. It's fine to run overnight: keep Recall open and the laptop plugged in.
+- **★ Review.** With a subject folder selected, tap **★ Review** to see every marked moment and photo from that subject in one place. Tap a time to listen.
+- **Find & replace** (⋯ menu on a recording) fixes words the transcript keeps getting wrong, e.g. a professor's name.
+  - You can apply it to the whole subject.
+  - Tick "fix automatically" and future transcripts in that subject are corrected as they're made.
+- **Bible references.** For sermons, references such as "John 3:16" or "Romans chapter eight verse twenty-eight" are listed at the top of your notes. English only.
+
+## Backup
+
+⚙ Settings → **Download full backup** saves one .zip file with all your audio, photos, notes and transcripts, plus readable text copies sorted by subject. **Restore from backup…** brings it back on any device.
 
 ## Listening back
 

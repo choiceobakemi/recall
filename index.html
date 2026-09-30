@@ -212,6 +212,66 @@ details summary{cursor:pointer;font-weight:600;font-size:14px;margin:6px 0}
 .mp-info span{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
 body.mini-on .fab{bottom:calc(92px + env(safe-area-inset-bottom))}
 body.mini-on #list{padding-bottom:90px}
+/* tools row, photos, topics, find, scriptures */
+.tools{display:flex;gap:6px;padding:0 16px;flex-wrap:wrap}
+.tool{height:34px;padding:0 12px;border-radius:10px;background:var(--surface-2);font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;color:var(--ink)}
+.tool svg{width:16px;height:16px}
+.tool.star{background:var(--star-soft);color:var(--star)}
+.note .nbody{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.thumb{display:block;max-width:min(300px,100%);max-height:220px;border-radius:10px;object-fit:cover;cursor:zoom-in;background:var(--surface-2);min-height:40px}
+.thumb-missing{font-size:13px;color:var(--accent);background:var(--accent-soft);border-radius:8px;padding:8px 10px;text-align:left;align-self:flex-start}
+.ntext:empty::before{content:attr(data-ph);color:var(--muted)}
+.note.topic{margin-top:8px;border-top:1px solid var(--line);border-radius:0;padding-top:10px}
+.note.topic .ntext{font-weight:700;font-size:16px}
+.note.topic .ntext::before{content:"§ ";color:var(--accent)}
+.thead{margin:12px 8px 4px;padding-top:10px;border-top:1px solid var(--line);font-size:15px;font-weight:700;display:flex;gap:8px;align-items:center}
+.thead::after{content:""}
+mark{background:#ffe58a;color:inherit;border-radius:3px;padding:0 1px}
+@media (prefers-color-scheme: dark){mark{background:#6b5a16}}
+.hit-cur{outline:2px solid var(--accent);outline-offset:1px}
+.findbar{display:flex;gap:4px;align-items:center;margin:0 16px 8px}
+.findbar input{flex:1;min-width:0;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--surface);padding:0 12px;outline:none}
+.findbar input:focus{border-color:var(--accent)}
+.findbar span{font-size:13px;color:var(--muted);min-width:44px;text-align:center;font-variant-numeric:tabular-nums}
+.scripts{margin:0 8px 8px;border-radius:12px;background:var(--surface-2);padding:8px 12px;font-size:14px}
+.scripts summary{font-weight:600;cursor:pointer}
+.scripts ul{list-style:none;margin:8px 0 2px;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.scripts li{display:inline-flex;gap:6px;align-items:center;background:var(--surface);border-radius:8px;padding:3px 8px}
+.scripts li small{color:var(--muted)}
+/* camera */
+.cam{position:fixed;inset:0;background:#000;z-index:70;display:flex;flex-direction:column}
+.cam video{flex:1;min-height:0;width:100%;object-fit:contain}
+.cam-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px calc(18px + env(safe-area-inset-bottom))}
+.cam-bar .pill{color:#fff;border-color:#555;background:transparent}
+.shutter{width:70px;height:70px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px #000,0 0 0 7px #fff}
+.shutter:active{transform:scale(.94)}
+.cam-count{position:absolute;top:calc(14px + env(safe-area-inset-top));left:0;right:0;text-align:center;color:#fff;font-size:14px;font-weight:600}
+.cam-flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .25s}
+/* photo viewer + dialogs */
+#photoDlg{width:min(960px,calc(100vw - 16px))}
+#photoDlg img{display:block;width:100%;max-height:72dvh;object-fit:contain;background:#000}
+.pv-row{display:flex;gap:8px;align-items:center;padding:10px 14px calc(10px + env(safe-area-inset-bottom));flex-wrap:wrap}
+.pv-row span{flex:1;min-width:120px;font-size:14px}
+/* review */
+.rv-group{margin:0 16px 14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:10px 8px 6px;box-shadow:var(--shadow)}
+.rv-head{display:flex;gap:8px;align-items:baseline;padding:0 6px 6px}
+.rv-head b{flex:1}
+.rv-head small{color:var(--muted)}
+.rv-head button{font-size:13px;color:var(--accent);font-weight:600}
+#reviewList{flex:1;overflow:auto;padding:4px 0 24px}
+/* transcription queue on home */
+.txglobal{margin:0 16px 8px;padding:8px 12px;border-radius:12px;background:var(--accent-soft);font-size:13px;display:flex;gap:8px;align-items:center}
+.txglobal span{flex:1;min-width:0}
+.txglobal button{font-weight:600;color:var(--rec);font-size:13px}
+/* timetable editor */
+.tt-row{display:grid;grid-template-columns:72px 1fr 1fr 30px;gap:6px;margin-bottom:10px;align-items:center}
+.tt-row input,.tt-row select{height:36px;border-radius:8px;border:1px solid var(--line);background:var(--bg);padding:0 6px;min-width:0;width:100%}
+.tt-row .tt-sub{grid-column:1 / 4}
+.tt-row button{color:var(--muted);font-size:18px}
+.tt-row input[type=time]{font-size:14px;padding:0 4px}
+.fab{max-width:calc(100vw - 32px)}
+.fab .lbl{text-align:left;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fab .lbl small{display:block;font-size:11px;font-weight:500;opacity:.9;margin-top:-2px}
 #toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:.2s;max-width:calc(100vw - 32px);z-index:50;text-align:center}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 </style>
@@ -230,8 +290,19 @@ body.mini-on #list{padding-bottom:90px}
   <div class="search"><input id="search" type="search" placeholder="Search titles, notes and transcripts" autocomplete="off"></div>
   <div class="chips" id="chips"></div>
   <div class="folderbar" id="folderBar" hidden></div>
+  <div class="txglobal" id="txGlobal" hidden><span id="txGMsg"></span><button id="txGStop">Stop</button></div>
   <main id="list"></main>
-  <button id="newBtn" class="fab"><span class="d"></span>New recording</button>
+  <button id="newBtn" class="fab"><span class="d"></span><span class="lbl" id="newLbl">New recording</span></button>
+</section>
+
+<!-- ================= REVIEW (★ moments + photos of one subject) ================= -->
+<section id="review" class="view" hidden>
+  <header class="bar">
+    <button id="rvBack" class="icon-btn" aria-label="Back"></button>
+    <h1 id="rvTitle" style="font-size:19px"></h1>
+  </header>
+  <p class="small" style="margin:0 16px 10px" id="rvInfo"></p>
+  <main id="reviewList"></main>
 </section>
 
 <!-- ================= SESSION ================= -->
@@ -239,12 +310,14 @@ body.mini-on #list{padding-bottom:90px}
   <header class="bar">
     <button id="backBtn" class="icon-btn" aria-label="Back"></button>
     <input id="title" aria-label="Title" autocomplete="off">
+    <button id="findBtn" class="icon-btn" aria-label="Search in this recording" title="Search in this recording"></button>
     <div class="menu">
       <button id="moreBtn" class="icon-btn" aria-label="More"></button>
       <div id="menuList" class="menu-list" hidden>
         <button data-act="copy"></button>
         <button data-act="md"></button>
         <button data-act="transcribe"></button>
+        <button data-act="replace"></button>
         <button data-act="audio"></button>
         <button data-act="freeaudio"></button>
         <button data-act="delete" class="danger"></button>
@@ -285,17 +358,29 @@ body.mini-on #list{padding-bottom:90px}
     <button id="dlAudioBtn" class="btn primary">Download audio</button></div>
   </div>
 
+  <div class="findbar" id="findBar" hidden>
+    <input id="findIn" type="search" placeholder="Search this recording" autocomplete="off">
+    <span id="findCount"></span>
+    <button id="findPrev" class="icon-btn" aria-label="Previous match">↑</button>
+    <button id="findNext" class="icon-btn" aria-label="Next match">↓</button>
+    <button id="findClose" class="icon-btn" aria-label="Close search">✕</button>
+  </div>
   <div class="tabs" id="tabs">
     <button data-tab="notes" class="on">My notes</button>
     <button data-tab="transcript">Transcript</button>
   </div>
   <div class="panes" id="panes" data-tab="notes">
-    <div class="pane" id="notesPane"><h2>My notes <span id="noteCount"></span></h2><ol class="list" id="notesList"></ol></div>
+    <div class="pane" id="notesPane"><h2>My notes <span id="noteCount"></span></h2><div id="scripts"></div><ol class="list" id="notesList"></ol></div>
     <div class="pane" id="transcriptPane"><h2>Transcript <span><span id="tSwitch" class="seg" hidden><button data-v="live">Live</button><button data-v="full">Full</button></span> <button id="txBtn" class="mini" hidden>Transcribe audio</button> <select id="tLangSel" class="langsel" aria-label="Language spoken in this recording" title="Language spoken in this recording"></select></span></h2><div id="txJob" class="txjob" hidden><div class="txbar"><span id="txBar"></span></div><div class="txrow"><span id="txMsg"></span><button id="txCancel">Cancel</button></div></div><div id="transcriptList"></div><div id="interim" class="interim"></div></div>
   </div>
 
+  <div class="tools">
+    <button id="markBtn" class="tool star" title="Mark this moment as important (or star the note you're typing)"></button>
+    <button id="photoBtn" class="tool" title="Take a photo of the board or slides, pinned to this moment"></button>
+    <button id="topicBtn" class="tool" title="Start a new topic here (type its name first, or rename it after)"></button>
+    <input id="photoIn" type="file" accept="image/*" multiple hidden>
+  </div>
   <footer class="composer">
-    <button id="markBtn" class="mark" title="Mark this moment as important (or star the note you're typing)"></button>
     <textarea id="noteInput" rows="1" placeholder="Type a note…" enterkeyhint="send"></textarea>
     <button id="addBtn" class="add">Add</button>
   </footer>
@@ -317,7 +402,20 @@ body.mini-on #list{padding-bottom:90px}
         <option value="base">Balanced (~80 MB), recommended</option>
         <option value="small">Most accurate (~250 MB), best on a laptop</option>
       </select></div>
-    <p class="small">Turns a finished recording (or an imported Voice Memo) into a timestamped transcript. The model downloads once, then works offline. It takes a while: expect several minutes per hour of audio on a laptop, and longer on a phone. Keep Recall open until it finishes.</p>
+    <p class="small" id="modelStatus"></p>
+    <p class="small">Turns a finished recording (or an imported Voice Memo) into a timestamped transcript. The model downloads once per device and is kept, so after that it works offline. It takes a while: expect several minutes per hour of audio on a laptop, and longer on a phone. Keep Recall open until it finishes.</p>
+
+    <label class="check"><input type="checkbox" id="setAutoTx"> Make the full transcript automatically when a recording stops</label>
+    <p class="small">On a laptop you can also queue a whole subject: select its folder on the home screen and tap <b>Transcribe all</b>. Leave Recall open and the laptop plugged in, and it works through them one by one (fine overnight).</p>
+
+    <h3>Timetable</h3>
+    <label class="check"><input type="checkbox" id="setTT"> Name and file recordings automatically during class</label>
+    <div id="ttRows"></div>
+    <button id="ttAdd" class="btn">+ Add a class</button>
+    <p class="small">From 20 minutes before a class until 15 minutes after, <b>New recording</b> is named like “Systems Engineering · Lecture 6” and filed in that subject's folder. Imported Voice Memos recorded during a class are filed the same way. If you stop and start again after a break, it becomes Part 2 of the same lecture. Tip: tap <b>Pause</b> during breaks to keep it all in one recording.</p>
+
+    <h3>Sermons</h3>
+    <label class="check"><input type="checkbox" id="setScripture"> Detect Bible references (e.g. “John 3:16”) and list them on the recording</label>
 
     <h3>Google Drive sync</h3>
     <p class="small" id="driveState"></p>
@@ -339,8 +437,11 @@ body.mini-on #list{padding-bottom:90px}
       <p class="small">Recall only asks for access to files it creates itself (a folder called “Recall Notes” in your Drive). It can't see your other files.</p>
     </details>
 
-    <h3>Storage</h3>
+    <h3>Storage &amp; backup</h3>
     <p class="small" id="storageInfo">—</p>
+    <div class="row"><button id="backupBtn" class="btn">Download full backup</button><button id="restoreBtn" class="btn">Restore from backup…</button>
+      <input id="restoreIn" type="file" accept=".zip,application/zip" hidden></div>
+    <p class="small" id="backupInfo">One .zip file with every recording's audio, photos, notes and transcripts, plus readable text copies sorted by subject. Keep it somewhere safe (e.g. your Mac or a USB stick).</p>
   </div>
   <div class="dlg-foot"><button id="closeSettings" class="btn primary">Done</button></div>
 </dialog>
@@ -355,6 +456,37 @@ body.mini-on #list{padding-bottom:90px}
     <button id="mpClose" class="round" aria-label="Close player">✕</button>
   </div>
 </div>
+<div id="cam" class="cam" hidden>
+  <video id="camVideo" playsinline muted autoplay></video>
+  <div id="camCount" class="cam-count"></div>
+  <div id="camFlash" class="cam-flash"></div>
+  <div class="cam-bar">
+    <button id="camLib" class="pill">Library</button>
+    <button id="camShot" class="shutter" aria-label="Take photo"></button>
+    <button id="camDone" class="pill">Done</button>
+  </div>
+</div>
+<dialog id="frDlg">
+  <div class="dlg">
+    <h2>Find &amp; replace</h2>
+    <div class="field"><label for="frFind">Find</label><input type="text" id="frFind" autocomplete="off" spellcheck="false"></div>
+    <div class="field"><label for="frRep">Replace with</label><input type="text" id="frRep" autocomplete="off" spellcheck="false"></div>
+    <label class="check"><input type="checkbox" id="frCase"> Match case</label>
+    <label class="check"><input type="checkbox" id="frWord" checked> Whole words only</label>
+    <label class="check" id="frAllWrap"><input type="checkbox" id="frAll"> In every recording in “<span id="frFolder"></span>”</label>
+    <label class="check"><input type="checkbox" id="frSave" checked> <span id="frSaveLbl">Also fix this automatically in future transcripts</span></label>
+    <p class="small" id="frCount">Changes your notes and both transcripts.</p>
+    <div id="frSaved"></div>
+  </div>
+  <div class="dlg-foot" style="gap:8px"><button id="frClose" class="btn">Close</button><button id="frGo" class="btn primary">Replace all</button></div>
+</dialog>
+<dialog id="photoDlg">
+  <img id="pvImg" alt="">
+  <div class="pv-row"><span id="pvCap"></span>
+    <button id="pvPlay" class="btn primary">▶ Play from here</button>
+    <button id="pvSave" class="btn">Download</button>
+    <button id="pvClose" class="btn">Close</button></div>
+</dialog>
 <div id="toast" role="status" aria-live="polite"></div>
 <div id="dropZone" hidden>Drop audio to import it into Recall</div>
 
@@ -392,6 +524,10 @@ const I = {
   trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>',
   upload:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3m-5 5 5-5 5 5M5 21h14"/></svg>',
   folder:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>',
+  camera:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+  topic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h7"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>',
   broom:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M6 16l4-10 4 10M8 12h4"/></svg>',
 };
 
@@ -420,7 +556,14 @@ function guessLang() {
   const hit = LANGS.find(([c]) => c.toLowerCase() === l.toLowerCase());
   return hit ? hit[0] : 'en-US';
 }
-const settings = Object.assign({ lang: guessLang(), transcript: true, clientId: '', autoSync: true, driveConnected: false, lastSync: 0 }, ls.get('settings', {}));
+const DEFAULT_TIMETABLE = [
+  { day: 1, start: '12:30', end: '15:30', subject: 'Systems Engineering' },
+  { day: 2, start: '12:30', end: '15:30', subject: 'Experimental Data Processing' },
+  { day: 4, start: '12:30', end: '15:30', subject: 'Systems Engineering' },
+  { day: 5, start: '12:30', end: '15:30', subject: 'Experimental Data Processing' },
+];
+const settings = Object.assign({ lang: guessLang(), transcript: true, clientId: '', autoSync: true, driveConnected: false, lastSync: 0,
+  timetable: DEFAULT_TIMETABLE, autoTimetable: true, autoTranscribe: !/iPad|iPhone|iPod|Android/.test(navigator.userAgent), scripture: true, fixes: {} }, ls.get('settings', {}));
 const saveSettings = () => ls.set('settings', settings);
 const fileSafe = s => (s || 'Recording').replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, ' ').trim().slice(0, 80);
 const dateStr = ts => new Date(ts).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
@@ -435,12 +578,15 @@ const DB = {
   db: null,
   open() {
     return new Promise((res, rej) => {
-      const r = indexedDB.open('recall', 1);
-      r.onupgradeneeded = () => {
+      const r = indexedDB.open('recall', 2);
+      r.onupgradeneeded = e => {
         const d = r.result;
-        d.createObjectStore('sessions', { keyPath: 'id' });
-        d.createObjectStore('audio');
-        d.createObjectStore('chunks', { autoIncrement: true }).createIndex('sid', 'sid');
+        if (e.oldVersion < 1) {
+          d.createObjectStore('sessions', { keyPath: 'id' });
+          d.createObjectStore('audio');
+          d.createObjectStore('chunks', { autoIncrement: true }).createIndex('sid', 'sid');
+        }
+        if (e.oldVersion < 2) d.createObjectStore('photos');
       };
       r.onsuccess = () => { this.db = r.result; res(); };
       r.onerror = () => rej(r.error);
@@ -461,6 +607,9 @@ const DB = {
   getAudio(id) { return this.run('audio', 'readonly', s => s.get(id)); },
   putAudio(id, b) { return this.run('audio', 'readwrite', s => s.put(b, id)); },
   delAudio(id) { return this.run('audio', 'readwrite', s => s.delete(id)); },
+  getPhoto(id) { return this.run('photos', 'readonly', s => s.get(id)); },
+  putPhoto(id, b) { return this.run('photos', 'readwrite', s => s.put(b, id)); },
+  delPhoto(id) { return this.run('photos', 'readwrite', s => s.delete(id)); },
   addChunk(sid, blob) { return this.run('chunks', 'readwrite', s => s.add({ sid, blob })); },
   getChunks(sid) { return this.run('chunks', 'readonly', s => s.index('sid').getAll(sid)); },
   delChunks(sid) {
@@ -476,6 +625,8 @@ async function patchLocal(id, fields) {
   if (cur && cur.id === id) Object.assign(cur, fields);
 }
 async function removeLocal(id) {
+  const s = await DB.get(id).catch(() => null);
+  for (const n of s?.notes || []) if (n.photo) await DB.delPhoto(n.photo).catch(() => {});
   await DB.del(id); await DB.delAudio(id).catch(() => {}); await DB.delChunks(id).catch(() => {});
 }
 
@@ -505,8 +656,9 @@ async function flushSave() { clearTimeout(saveTimer); saveTimer = null; if (cur)
 
 /* ---------- routing ---------- */
 function route() {
-  const m = location.hash.match(/^#s=(.+)$/);
+  const m = location.hash.match(/^#s=(.+)$/), r = location.hash.match(/^#review=(.*)$/);
   if (m) openSession(decodeURIComponent(m[1]));
+  else if (r) openReview(decodeURIComponent(r[1]));
   else goHome();
 }
 window.addEventListener('hashchange', () => {
@@ -523,14 +675,15 @@ window.addEventListener('hashchange', () => {
 async function goHome() {
   if (cur) { await flushSave(); }
   cur = null;
-  $('#session').hidden = true; $('#home').hidden = false;
+  $('#session').hidden = true; $('#review').hidden = true; $('#home').hidden = false;
   renderList(); updateMini();
 }
 async function renderList() {
   const q = $('#search').value.trim().toLowerCase();
   let all = (await DB.all()).filter(s => !s.pendingDelete).sort((a, b) => b.createdAt - a.createdAt);
   knownFolders = [...new Set([...(settings.folders || []), ...all.map(s => s.folder).filter(Boolean)])].sort((a, b) => a.localeCompare(b));
-  renderChips();
+  const untx = folderFilter && folderFilter !== NO_FOLDER ? all.filter(s => s.folder === folderFilter && s.hasAudio && s.audioLocal && !s.fullTranscript?.length && !s.pendingDelete).length : 0;
+  renderChips(untx); updateFab(); updateTxGlobal();
   if (folderFilter === NO_FOLDER) all = all.filter(s => !s.folder);
   else if (folderFilter) all = all.filter(s => s.folder === folderFilter);
   if (q) all = all.filter(s => (s.title + ' ' + s.notes.map(n => n.text).join(' ') + ' ' + s.transcript.map(t => t.text).join(' ') + ' ' + (s.fullTranscript || []).map(t => t.text).join(' ')).toLowerCase().includes(q));
@@ -551,10 +704,13 @@ async function renderList() {
       <div class="card-prev">${esc(prev)}</div></button>`;
   }).join('');
 }
-$('#list').addEventListener('click', e => { const c = e.target.closest('.card'); if (c) location.hash = 's=' + encodeURIComponent(c.dataset.id); });
+$('#list').addEventListener('click', e => { const c = e.target.closest('.card'); if (!c) return; pendingFind = $('#search').value.trim(); location.hash = 's=' + encodeURIComponent(c.dataset.id); });
 $('#search').addEventListener('input', () => renderList());
 $('#newBtn').addEventListener('click', async () => {
-  const s = newSession(); await DB.put(s);
+  const s = newSession();
+  const filed = await applyTimetable(s);
+  await DB.put(s);
+  if (filed) setTimeout(() => toast(`Filed in ${s.folder}`), 600);
   if (audio && !audio.paused) audio.pause();
   cur = s; history.pushState(null, '', '#s=' + s.id);
   await showSession();
@@ -570,7 +726,7 @@ function addFolder(name) {
   return name;
 }
 function setFolderFilter(f) { folderFilter = f; ls.set('folderFilter', f); renderList(); }
-function renderChips() {
+function renderChips(untx = 0) {
   const names = knownFolders;
   if (folderFilter && folderFilter !== NO_FOLDER && !names.includes(folderFilter)) { folderFilter = ''; ls.set('folderFilter', ''); }
   const chip = (v, label) => `<button class="chip${folderFilter === v ? ' on' : ''}" data-f="${esc(v)}">${esc(label)}</button>`;
@@ -579,7 +735,7 @@ function renderChips() {
   const bar = $('#folderBar');
   if (folderFilter && folderFilter !== NO_FOLDER) {
     bar.hidden = false;
-    bar.innerHTML = `<b>${I.folder} ${esc(folderFilter)}</b><button data-fa="export">Download all as text</button><button data-fa="rename">Rename</button><button data-fa="delete" class="danger">Delete folder</button>`;
+    bar.innerHTML = `<b>${I.folder} ${esc(folderFilter)}</b><button data-fa="review">★ Review</button>${untx ? `<button data-fa="txall">Transcribe all (${untx})</button>` : ''}<button data-fa="export">Download all as text</button><button data-fa="rename">Rename</button><button data-fa="delete" class="danger">Delete folder</button>`;
   } else bar.hidden = true;
 }
 $('#chips').addEventListener('click', e => {
@@ -594,6 +750,11 @@ $('#chips').addEventListener('click', e => {
 $('#folderBar').addEventListener('click', async e => {
   const b = e.target.closest('button'); if (!b) return;
   const f = folderFilter, inF = (await DB.all()).filter(s => s.folder === f && !s.pendingDelete);
+  if (b.dataset.fa === 'review') { location.hash = 'review=' + encodeURIComponent(f); return; }
+  if (b.dataset.fa === 'txall') {
+    const ids = inF.filter(s => s.hasAudio && s.audioLocal && !s.fullTranscript?.length).sort((a, b) => a.createdAt - b.createdAt).map(s => s.id);
+    queueTranscription(ids); toast(`Transcribing ${ids.length} recording${ids.length > 1 ? 's' : ''}. Keep Recall open.`, 4000); renderList(); return;
+  }
   if (b.dataset.fa === 'export') {
     if (!inF.length) return toast('No recordings in this folder yet');
     inF.sort((a, b) => a.createdAt - b.createdAt);
@@ -629,6 +790,256 @@ $('#folderSel').addEventListener('change', e => {
   toast(v ? `Moved to “${v}”` : 'Removed from folder');
 });
 
+
+/* ---------- timetable: name and file recordings made during class ---------- */
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const toMin = s => { const [hh, mm] = String(s || '0:0').split(':').map(Number); return (hh || 0) * 60 + (mm || 0); };
+function classAt(date = new Date()) {
+  if (settings.autoTimetable === false) return null;
+  const day = (date.getDay() + 6) % 7 + 1, m = date.getHours() * 60 + date.getMinutes();
+  return (settings.timetable || []).find(r => +r.day === day && r.subject?.trim() && m >= toMin(r.start) - 20 && m <= toMin(r.end) + 15) || null;
+}
+const lectureTitle = (f, n, part) => `${f} · Lecture ${n}${part ? ' · Part ' + part : ''}`;
+async function applyTimetable(s, when = new Date(s.createdAt)) {
+  const cls = classAt(when); if (!cls) return false;
+  const folder = addFolder(cls.subject); s.folder = folder;
+  const others = (await DB.all()).filter(x => x.id !== s.id && x.folder === folder && !x.pendingDelete);
+  const dayKey = d => new Date(d).toDateString();
+  const sameDay = others.filter(x => dayKey(x.createdAt) === dayKey(s.createdAt) && x.lectureNo);
+  if (sameDay.length) {                         // came back after a break: Part 2, 3…
+    s.lectureNo = sameDay[0].lectureNo;
+    s.part = Math.max(...sameDay.map(x => x.part || 1)) + 1;
+    for (const x of sameDay) if (!x.part) {
+      x.part = 1;
+      if (x.title === lectureTitle(folder, x.lectureNo, 0)) x.title = lectureTitle(folder, x.lectureNo, 1);   // only if you haven't renamed it
+      x.updatedAt = Date.now(); await DB.put(x);
+    }
+  } else {
+    s.lectureNo = new Set(others.filter(x => x.createdAt < s.createdAt).map(x => dayKey(x.createdAt))).size + 1;
+    s.part = 0;
+  }
+  s.title = lectureTitle(folder, s.lectureNo, s.part);
+  return true;
+}
+function updateFab() {
+  const cls = classAt();
+  $('#newLbl').innerHTML = cls ? `${esc(cls.subject)}<small>Tap to record · until ${esc(cls.end)}</small>` : 'New recording';
+}
+setInterval(() => { if (!$('#home').hidden) updateFab(); }, 60000);
+function renderTT() {
+  const rows = settings.timetable || [];
+  $('#ttRows').innerHTML = rows.map((r, i) => `<div class="tt-row" data-i="${i}">
+      <select data-k="day" aria-label="Day">${DAYS.map((d, j) => `<option value="${j + 1}"${+r.day === j + 1 ? ' selected' : ''}>${d}</option>`).join('')}</select>
+      <input data-k="start" type="time" value="${esc(r.start)}" aria-label="Starts">
+      <input data-k="end" type="time" value="${esc(r.end)}" aria-label="Ends">
+      <button data-del aria-label="Remove class">✕</button>
+      <input class="tt-sub" data-k="subject" type="text" value="${esc(r.subject)}" placeholder="Subject (becomes the folder name)" aria-label="Subject">
+    </div>`).join('') || '<p class="small">No classes yet.</p>';
+}
+$('#ttRows').addEventListener('change', e => {
+  const row = e.target.closest('.tt-row'); if (!row) return;
+  const r = settings.timetable[+row.dataset.i]; const k = e.target.dataset.k; if (!k) return;
+  r[k] = k === 'day' ? +e.target.value : k === 'subject' ? cleanFolder(e.target.value) : e.target.value;
+  saveSettings(); updateFab();
+});
+$('#ttRows').addEventListener('click', e => {
+  if (!e.target.closest('[data-del]')) return;
+  settings.timetable.splice(+e.target.closest('.tt-row').dataset.i, 1); saveSettings(); renderTT(); updateFab();
+});
+$('#ttAdd').addEventListener('click', () => {
+  const last = settings.timetable?.[settings.timetable.length - 1];
+  (settings.timetable ||= []).push({ day: 1, start: last?.start || '09:00', end: last?.end || '10:30', subject: '' });
+  saveSettings(); renderTT();
+  $('#ttRows .tt-row:last-child .tt-sub')?.focus();
+});
+
+/* ---------- review sheet: every ★ moment and photo in a subject ---------- */
+async function openReview(folder) {
+  if (cur) await flushSave();
+  cur = null;
+  $('#home').hidden = true; $('#session').hidden = true; $('#review').hidden = false;
+  $('#rvTitle').textContent = `★ Review · ${folder}`;
+  const list = (await DB.all()).filter(s => s.folder === folder && !s.pendingDelete).sort((a, b) => a.createdAt - b.createdAt);
+  let total = 0;
+  const groups = list.map(s => {
+    const items = s.notes.filter(n => n.star || n.photo);
+    if (!items.length) return '';
+    total += items.length;
+    return `<div class="rv-group"><div class="rv-head"><b>${esc(s.title)}</b><small>${dateStr(s.createdAt)}</small><button data-open="${esc(s.id)}">Open</button></div><ol class="list">` +
+      items.map(n => `<li class="note${n.star ? ' star' : ''}" data-id="${n.id}" data-t="${n.t ?? ''}">
+        <button class="tchip${n.t == null ? ' none' : ''}" data-play="${esc(s.id)}" data-seek="${n.t ?? ''}">${n.t == null ? '--:--' : fmt(n.t)}</button>
+        ${n.photo ? `<div class="nbody">${photoHtml(n, s.id)}${n.text ? `<div class="ntext">${esc(n.text)}</div>` : ''}</div>` : `<div class="ntext">${esc(n.text)}</div>`}</li>`).join('') + '</ol></div>';
+  }).join('');
+  $('#rvInfo').textContent = total ? `${total} marked moment${total > 1 ? 's' : ''} and photos from ${list.length} recording${list.length > 1 ? 's' : ''}. Tap a time to listen.` : '';
+  $('#reviewList').innerHTML = groups || `<div class="empty"><h2>Nothing marked yet</h2>During a lecture, tap <b>★ Mark</b> (or add a <b>Photo</b>) at the important moments. They'll all be collected here for revision.</div>`;
+  fillThumbs($('#reviewList')); updateMini();
+}
+$('#reviewList').addEventListener('click', e => {
+  const o = e.target.closest('[data-open]'); if (o) { location.hash = 's=' + encodeURIComponent(o.dataset.open); return; }
+  const c = e.target.closest('[data-play]'); if (c && c.dataset.seek !== '') playAt(c.dataset.play, +c.dataset.seek);
+});
+$('#rvBack').addEventListener('click', () => { location.hash = ''; });
+
+/* ---------- find & replace, and fixes remembered for future transcripts ---------- */
+function fixRegex(r) {
+  const flags = 'g' + (r.cs ? '' : 'i') + 'u', body = escapeRe(r.find);
+  if (r.word) { try { return new RegExp(`(?<![\\p{L}\\p{N}_])${body}(?![\\p{L}\\p{N}_])`, flags); } catch {} }
+  return new RegExp(body, flags);
+}
+function applyFixes(text, folder) {
+  const rules = [...(settings.fixes?.['*'] || []), ...(folder ? settings.fixes?.[folder] || [] : [])];
+  for (const r of rules) { try { text = text.replace(fixRegex(r), r.rep); } catch {} }
+  return text;
+}
+function replaceIn(s, rule, dry) {
+  let n = 0; const re = fixRegex(rule);
+  const fix = x => { const m = x.text?.match(re); if (m) { n += m.length; if (!dry) x.text = x.text.replace(re, rule.rep); } };
+  (s.notes || []).forEach(fix); (s.transcript || []).forEach(fix); (s.fullTranscript || []).forEach(fix);
+  return n;
+}
+function frRule() { return { find: $('#frFind').value, rep: $('#frRep').value, cs: $('#frCase').checked, word: $('#frWord').checked }; }
+async function frScope() {
+  if (!$('#frAll').checked || !cur.folder) return [cur];
+  return [cur, ...(await DB.all()).filter(s => s.id !== cur.id && s.folder === cur.folder && !s.pendingDelete)];
+}
+async function frPreview() {
+  const r = frRule();
+  if (!r.find) { $('#frCount').textContent = 'Changes your notes and both transcripts.'; return; }
+  let n = 0, files = 0; for (const s of await frScope()) { const k = replaceIn(s, r, true); n += k; if (k) files++; }
+  $('#frCount').textContent = n ? `${n} match${n > 1 ? 'es' : ''}${files > 1 ? ` in ${files} recordings` : ''}.` : 'No matches.';
+}
+function renderSavedFixes() {
+  const key = cur?.folder || '*', list = settings.fixes?.[key] || [];
+  $('#frSaved').innerHTML = list.length ? `<p class="small"><b>Fixed automatically${cur?.folder ? ` in ${esc(cur.folder)}` : ''}:</b></p>` +
+    list.map((r, i) => `<p class="small">“${esc(r.find)}” → “${esc(r.rep)}” <button class="mini" data-unfix="${i}">remove</button></p>`).join('') : '';
+}
+function openReplace() {
+  $('#frFind').value = findQ || ''; $('#frRep').value = '';
+  $('#frAllWrap').hidden = !cur.folder; $('#frFolder').textContent = cur.folder || ''; $('#frAll').checked = !!cur.folder;
+  $('#frSaveLbl').textContent = cur.folder ? `Also fix this automatically in future transcripts of “${cur.folder}”` : 'Also fix this automatically in future transcripts';
+  renderSavedFixes(); frPreview(); $('#frDlg').showModal(); $('#frFind').focus();
+}
+['frFind', 'frCase', 'frWord', 'frAll'].forEach(id => $('#' + id).addEventListener(id === 'frFind' ? 'input' : 'change', frPreview));
+$('#frClose').addEventListener('click', () => $('#frDlg').close());
+$('#frSaved').addEventListener('click', e => {
+  const b = e.target.closest('[data-unfix]'); if (!b) return;
+  settings.fixes[cur?.folder || '*'].splice(+b.dataset.unfix, 1); saveSettings(); renderSavedFixes();
+});
+$('#frGo').addEventListener('click', async () => {
+  const r = frRule(); if (!r.find) return;
+  let n = 0;
+  for (const s of await frScope()) {
+    const k = replaceIn(s, r, false); if (!k) continue; n += k;
+    if (s === cur) touch(); else { s.updatedAt = Date.now(); await DB.put(s); }
+  }
+  if ($('#frSave').checked) { const key = cur.folder || '*'; ((settings.fixes ||= {})[key] ||= []).push(r); saveSettings(); }
+  renderNotes(); renderTranscript(); scheduleAutoSync();
+  $('#frDlg').close();
+  toast(n ? `Replaced ${n} time${n > 1 ? 's' : ''}${$('#frSave').checked ? ' and saved for the future' : ''}` : ($('#frSave').checked ? 'Saved for future transcripts' : 'Nothing to replace'), 3500);
+});
+
+/* ---------- full backup (.zip) and restore ---------- */
+const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u8) { let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = CRC_T[(c ^ u8[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+async function makeZip(entries, onProgress) {
+  // simple "stored" zip (no compression: audio and photos are already compressed)
+  const enc = new TextEncoder(), parts = [], central = []; let offset = 0;
+  const d = new Date(), dosTime = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), dosDate = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+  for (let i = 0; i < entries.length; i++) {
+    const e = entries[i];
+    const blob = e.blob || new Blob([enc.encode(e.text)]);
+    const data = new Uint8Array(await blob.arrayBuffer()), crc = crc32(data), name = enc.encode(e.name);
+    const lh = new DataView(new ArrayBuffer(30));
+    lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true);
+    lh.setUint16(10, dosTime, true); lh.setUint16(12, dosDate, true); lh.setUint32(14, crc, true);
+    lh.setUint32(18, data.length, true); lh.setUint32(22, data.length, true); lh.setUint16(26, name.length, true); lh.setUint16(28, 0, true);
+    parts.push(lh.buffer, name, blob);
+    central.push({ name, crc, size: data.length, offset });
+    offset += 30 + name.length + data.length;
+    onProgress?.(i + 1, entries.length);
+  }
+  const cdStart = offset;
+  for (const c of central) {
+    const ch = new DataView(new ArrayBuffer(46));
+    ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true);
+    ch.setUint16(12, dosTime, true); ch.setUint16(14, dosDate, true); ch.setUint32(16, c.crc, true); ch.setUint32(20, c.size, true); ch.setUint32(24, c.size, true);
+    ch.setUint16(28, c.name.length, true); ch.setUint32(42, c.offset, true);
+    parts.push(ch.buffer, c.name); offset += 46 + c.name.length;
+  }
+  const end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true); end.setUint16(8, central.length, true); end.setUint16(10, central.length, true);
+  end.setUint32(12, offset - cdStart, true); end.setUint32(16, cdStart, true);
+  parts.push(end.buffer);
+  return new Blob(parts, { type: 'application/zip' });
+}
+async function readZip(file) {
+  const tail = new DataView(await file.slice(Math.max(0, file.size - 22)).arrayBuffer());
+  if (tail.getUint32(0, true) !== 0x06054b50) throw new Error('This isn’t a Recall backup file');
+  const count = tail.getUint16(10, true), cdSize = tail.getUint32(12, true), cdOff = tail.getUint32(16, true);
+  const cd = new DataView(await file.slice(cdOff, cdOff + cdSize).arrayBuffer()), dec = new TextDecoder(), out = {};
+  for (let i = 0, p = 0; i < count; i++) {
+    const method = cd.getUint16(p + 10, true), size = cd.getUint32(p + 20, true), nl = cd.getUint16(p + 28, true), el = cd.getUint16(p + 30, true), cl = cd.getUint16(p + 32, true), lo = cd.getUint32(p + 42, true);
+    const name = dec.decode(new Uint8Array(cd.buffer, cd.byteOffset + p + 46, nl));
+    if (method !== 0) throw new Error('This zip wasn’t made by Recall');
+    const lh = new DataView(await file.slice(lo, lo + 30).arrayBuffer());
+    const start = lo + 30 + lh.getUint16(26, true) + lh.getUint16(28, true);
+    out[name] = file.slice(start, start + size);
+    p += 46 + nl + el + cl;
+  }
+  return out;
+}
+$('#backupBtn').addEventListener('click', async () => {
+  const b = $('#backupBtn'); b.disabled = true;
+  try {
+    await flushSave();
+    const all = (await DB.all()).filter(s => !s.pendingDelete), entries = [], used = new Set();
+    for (const s of all) {
+      const a = s.hasAudio && s.audioLocal ? await DB.getAudio(s.id) : null;
+      if (a) entries.push({ name: `audio/${s.id}.${extFor(a.type)}`, blob: a });
+      for (const n of s.notes) if (n.photo) { const ph = await DB.getPhoto(n.photo); if (ph) entries.push({ name: `photos/${n.photo}.jpg`, blob: ph }); }
+      let md = `Readable copies/${cleanFolder(s.folder) || 'No folder'}/${fileBase(s)}.md`; while (used.has(md)) md = md.replace(/\.md$/, ' (2).md'); used.add(md);
+      entries.push({ name: md, text: toMarkdown(s) });
+    }
+    const { clientId, folders, timetable, autoTimetable, fixes, lang, txModel, scripture, autoTranscribe } = settings;
+    entries.unshift({ name: 'recall-backup.json', text: JSON.stringify({ app: 'recall-backup', v: 1, created: Date.now(),
+      settings: { clientId, folders, timetable, autoTimetable, fixes, lang, txModel, scripture, autoTranscribe },
+      sessions: all.map(s => ({ ...s, driveJsonId: undefined, driveAudioId: undefined, driveFolderId: undefined })) }) });
+    const zip = await makeZip(entries, (i, n) => { $('#backupInfo').textContent = `Preparing backup… ${i} of ${n} files`; });
+    download(zip, `Recall backup ${new Date().toISOString().slice(0, 10)}.zip`);
+    $('#backupInfo').textContent = `Backup ready: ${all.length} recording${all.length === 1 ? '' : 's'}, ${(zip.size / 1048576).toFixed(1)} MB.`;
+  } catch (e) { $('#backupInfo').textContent = 'Backup failed: ' + (e.message || e); }
+  finally { b.disabled = false; }
+});
+$('#restoreBtn').addEventListener('click', () => $('#restoreIn').click());
+$('#restoreIn').addEventListener('change', async e => {
+  const f = e.target.files?.[0]; e.target.value = ''; if (!f) return;
+  try {
+    const files = await readZip(f);
+    const meta = JSON.parse(await files['recall-backup.json'].text());
+    if (meta.app !== 'recall-backup') throw new Error('This isn’t a Recall backup file');
+    let added = 0, updated = 0;
+    for (const s of meta.sessions) {
+      const local = await DB.get(s.id);
+      if (local && (local.updatedAt || 0) >= (s.updatedAt || 0)) continue;
+      const clean = { ...s }; delete clean.driveJsonId; delete clean.driveAudioId; delete clean.driveFolderId; delete clean.pendingDelete;
+      const audioName = Object.keys(files).find(k => k.startsWith(`audio/${s.id}.`));
+      if (audioName) { await DB.putAudio(s.id, new Blob([files[audioName]], { type: (s.mimeType || 'audio/mp4').split(';')[0] })); clean.audioLocal = true; }
+      else clean.audioLocal = !!local?.audioLocal;
+      for (const n of clean.notes || []) if (n.photo && files[`photos/${n.photo}.jpg`]) await DB.putPhoto(n.photo, new Blob([files[`photos/${n.photo}.jpg`]], { type: 'image/jpeg' }));
+      clean.recording = false;
+      await DB.put(clean); local ? updated++ : added++;
+    }
+    const st = meta.settings || {};
+    settings.folders = [...new Set([...(settings.folders || []), ...(st.folders || [])])];
+    if (st.timetable?.length) settings.timetable = st.timetable;
+    for (const [k, v] of Object.entries(st.fixes || {})) settings.fixes[k] = [...(settings.fixes[k] || []), ...v.filter(r => !(settings.fixes[k] || []).some(x => x.find === r.find && x.rep === r.rep))];
+    if (!settings.clientId && st.clientId) settings.clientId = st.clientId;
+    saveSettings(); renderTT();
+    $('#backupInfo').textContent = `Restored: ${added} new, ${updated} updated recording${added + updated === 1 ? '' : 's'}.`;
+    renderList();
+  } catch (err) { $('#backupInfo').textContent = 'Restore failed: ' + (err.message || err); }
+});
+
 /* =========================================================
    SESSION VIEW
    ========================================================= */
@@ -640,12 +1051,14 @@ async function openSession(id) {
   cur = s; await showSession();
 }
 async function showSession() {
-  $('#home').hidden = true; $('#session').hidden = false; $('#menuList').hidden = true;
+  $('#home').hidden = true; $('#review').hidden = true; $('#session').hidden = false; $('#menuList').hidden = true;
   $('#title').value = cur.title;
   tView = cur.fullTranscript?.length ? 'full' : 'live'; lastActive = {};
+  if (!pendingFind) { findQ = ''; $('#findBar').hidden = true; }
   setTab('notes');
   renderNotes(); renderTranscript(); renderControls(); renderFolderSel();
   await loadAudio(); updateMini();
+  if (pendingFind) { const q = pendingFind; pendingFind = ''; openFind(q); }
 }
 function renderControls() {
   const recording = !!rec;
@@ -689,20 +1102,27 @@ $('#title').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preven
 
 /* ---------- notes ---------- */
 function sortNotes() { const k = n => n.t == null ? Number.MAX_SAFE_INTEGER : n.t; cur.notes.sort((a, b) => k(a) - k(b)); }
+function photoHtml(n, sid) {
+  return `<img class="thumb" data-pid="${esc(n.photo)}" data-drive="${esc(n.photoDrive || '')}" data-sid="${esc(sid || '')}" data-t="${n.t ?? ''}" alt="Photo at ${fmt(n.t)}">`;
+}
 function noteHtml(n) {
-  return `<li class="note${n.star ? ' star' : ''}${n.auto ? ' auto' : ''}" data-id="${n.id}" data-t="${n.t ?? ''}">
+  const cls = ['note', n.star && 'star', n.auto && 'auto', n.kind === 'topic' && 'topic', n.photo && 'photo'].filter(Boolean).join(' ');
+  const text = `<div class="ntext" contenteditable="true" spellcheck="true"${n.photo ? ' data-ph="Add a caption…"' : ''}>${hl(n.text)}</div>`;
+  return `<li class="${cls}" data-id="${n.id}" data-t="${n.t ?? ''}">
     <button class="tchip${n.t == null ? ' none' : ''}" data-seek="${n.t ?? ''}">${n.t == null ? '--:--' : fmt(n.t)}</button>
-    <div class="ntext" contenteditable="true" spellcheck="true">${esc(n.text)}</div>
-    <button class="ndel" aria-label="Delete note">×</button></li>`;
+    ${n.photo ? `<div class="nbody">${photoHtml(n, cur?.id)}${text}</div>` : text}
+    <button class="ndel" aria-label="Delete">×</button></li>`;
 }
 function renderNotes() {
   $('#notesList').innerHTML = cur.notes.length ? cur.notes.map(noteHtml).join('')
-    : `<li class="hint">Your notes appear here. Start typing below — the timestamp is taken from the moment you <i>start</i> typing, so it lines up with what was just said.</li>`;
-  $('#noteCount').textContent = cur.notes.length ? cur.notes.length : '';
+    : `<li class="hint">Your notes appear here. Start typing below — the timestamp is taken from the moment you <i>start</i> typing, so it lines up with what was just said. Use <b>Photo</b> for the board or slides and <b>Topic</b> when the lecture moves on.</li>`;
+  const count = cur.notes.filter(n => n.kind !== 'topic').length;
+  $('#noteCount').textContent = count || '';
+  renderScriptures(); fillThumbs($('#notesList'));
 }
 function currentPos() {
   if (rec) return elapsed();
-  if (cur.hasAudio && cur.audioLocal && audio.src && (audio.currentTime > 0 || !audio.paused)) return Math.round(audio.currentTime * 1000);
+  if (isMine() && (audio.currentTime > 0 || !audio.paused)) return Math.round(audio.currentTime * 1000);
   return null;
 }
 let noteStartT = null;
@@ -732,7 +1152,12 @@ function addNote(star) {
 $('#notesList').addEventListener('click', e => {
   const chip = e.target.closest('.tchip'); if (chip && chip.dataset.seek !== '') return seekTo(+chip.dataset.seek);
   const del = e.target.closest('.ndel');
-  if (del) { const id = del.closest('.note').dataset.id; cur.notes = cur.notes.filter(n => n.id !== id); renderNotes(); touch(); }
+  if (del) {
+    const id = del.closest('.note').dataset.id, n = cur.notes.find(x => x.id === id);
+    if (n?.photo && !confirm('Delete this photo?')) return;
+    if (n?.photo) DB.delPhoto(n.photo).catch(() => {});
+    cur.notes = cur.notes.filter(x => x.id !== id); renderNotes(); if (n?.kind === 'topic') renderTranscript(); touch();
+  }
 });
 function editableHandlers(container, getList) {
   container.addEventListener('keydown', e => {
@@ -744,7 +1169,8 @@ function editableHandlers(container, getList) {
     const item = list.find(x => x.id === row.dataset.id); if (!item) return;
     const text = e.target.innerText.trim();
     if (text === item.text) return;
-    if (!text) { list.splice(list.indexOf(item), 1); row.remove(); } else item.text = text;
+    if (!text && item.photo) item.text = '';
+    else if (!text) { list.splice(list.indexOf(item), 1); row.remove(); } else item.text = text;
     touch();
   });
   container.addEventListener('paste', e => {
@@ -753,6 +1179,258 @@ function editableHandlers(container, getList) {
   });
 }
 editableHandlers($('#notesList'), () => cur.notes);
+
+
+/* ---------- photos of the board / slides, pinned to the moment ---------- */
+const photoUrls = new Map();
+async function photoURL(pid) {
+  if (photoUrls.has(pid)) return photoUrls.get(pid);
+  const b = await DB.getPhoto(pid).catch(() => null); if (!b) return null;
+  const u = URL.createObjectURL(b); photoUrls.set(pid, u); return u;
+}
+async function shrinkImage(src, max = 1600, q = 0.82) {
+  let img;
+  if (src instanceof HTMLVideoElement) img = src;
+  else {
+    try { img = await createImageBitmap(src, { imageOrientation: 'from-image' }); }
+    catch { img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(src); }); }
+  }
+  const w = img.videoWidth || img.width, hh = img.videoHeight || img.height, k = Math.min(1, max / Math.max(w, hh));
+  const c = document.createElement('canvas'); c.width = Math.round(w * k); c.height = Math.round(hh * k);
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+  return new Promise((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error('Could not save photo')), 'image/jpeg', q));
+}
+async function addPhotoNote(blob, t) {
+  if (!cur) return;
+  const pid = uid(); await DB.putPhoto(pid, blob);
+  const caption = input.value.trim();
+  if (caption) { input.value = ''; input.style.height = ''; noteStartT = null; }
+  cur.notes.push({ id: uid(), t, text: caption, photo: pid, at: Date.now() });
+  sortNotes(); renderNotes(); touch();
+}
+async function fetchPhoto(pid, driveId) {
+  const r = await Drive.api(`files/${driveId}?alt=media`);
+  await DB.putPhoto(pid, new Blob([await r.blob()], { type: 'image/jpeg' }));
+}
+async function fillThumbs(root) {
+  for (const img of root.querySelectorAll('img.thumb[data-pid]:not([src])')) {
+    const pid = img.dataset.pid, drive = img.dataset.drive;
+    let u = await photoURL(pid);
+    if (!u && drive && Drive.hasToken()) { try { await fetchPhoto(pid, drive); u = await photoURL(pid); } catch {} }
+    if (u) { img.src = u; continue; }
+    const b = document.createElement('button');
+    b.className = 'thumb-missing'; b.dataset.pid = pid; b.dataset.drive = drive || '';
+    b.textContent = drive ? '📷 Photo saved in Google Drive · tap to load' : '📷 Photo is on the device that took it (sync there first)';
+    img.replaceWith(b);
+  }
+}
+document.addEventListener('click', async e => {
+  const miss = e.target.closest('.thumb-missing');
+  if (miss && miss.dataset.drive) {
+    try { await Drive.auth(true); await fetchPhoto(miss.dataset.pid, miss.dataset.drive); } catch (err) { return toast(err.message || 'Could not load photo'); }
+    const img = document.createElement('img'); img.className = 'thumb'; img.dataset.pid = miss.dataset.pid;
+    const row = miss.closest('[data-t]'); if (row) img.dataset.t = row.dataset.t;
+    miss.replaceWith(img); fillThumbs(img.parentElement);
+    return;
+  }
+  const th = e.target.closest('img.thumb');
+  if (th && th.src) openPhoto(th);
+});
+// photo viewer
+function openPhoto(img) {
+  const d = $('#photoDlg'), row = img.closest('[data-id]');
+  const caption = row?.querySelector('.ntext')?.innerText.trim() || '';
+  const t = img.dataset.t !== '' ? +img.dataset.t : null;
+  $('#pvImg').src = img.src;
+  $('#pvCap').textContent = (t != null ? fmt(t) + ' · ' : '') + (caption || 'Photo');
+  d.dataset.sid = img.dataset.sid || cur?.id || ''; d.dataset.t = t ?? ''; d.dataset.pid = img.dataset.pid;
+  $('#pvPlay').hidden = t == null;
+  d.showModal();
+}
+$('#pvClose').addEventListener('click', () => $('#photoDlg').close());
+$('#pvSave').addEventListener('click', async () => {
+  const d = $('#photoDlg'), b = await DB.getPhoto(d.dataset.pid);
+  if (b) download(b, `Photo ${fmt(+d.dataset.t || 0).replace(/:/g, '-')}.jpg`);
+});
+$('#pvPlay').addEventListener('click', async () => {
+  const d = $('#photoDlg'); d.close();
+  await playAt(d.dataset.sid, +d.dataset.t);
+});
+// play any recording from a moment (used by photos and the review sheet)
+async function playAt(sid, ms) {
+  if (rec) return toast('Stop recording first');
+  const s = (cur && cur.id === sid) ? cur : await DB.get(sid);
+  if (!s || !s.hasAudio) return;
+  if (!s.audioLocal) return toast('Open the recording and download its audio first');
+  if (player.sid !== s.id && !await loadInto(s)) return;
+  setPos(Math.max(0, ms / 1000 - 1)); audio.play().catch(() => {}); updatePlayUI();
+}
+// camera: in-app on phones (so recording keeps going), file picker on a laptop
+let photoT = null, camStream = null, camShots = 0;
+$('#photoBtn').addEventListener('click', async () => {
+  if (!cur) return;
+  photoT = currentPos();
+  if (!IS_MOBILE || !navigator.mediaDevices?.getUserMedia) return $('#photoIn').click();
+  try {
+    camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false });
+  } catch { return $('#photoIn').click(); }
+  $('#camVideo').srcObject = camStream; $('#cam').hidden = false; camShots = 0; $('#camCount').textContent = 'Tap the button to take a photo';
+});
+function closeCamera() { camStream?.getTracks().forEach(t => t.stop()); camStream = null; $('#camVideo').srcObject = null; $('#cam').hidden = true; }
+$('#camDone').addEventListener('click', () => { closeCamera(); if (camShots) toast(`${camShots} photo${camShots > 1 ? 's' : ''} added to your notes`); });
+$('#camLib').addEventListener('click', () => { closeCamera(); $('#photoIn').click(); });
+$('#camShot').addEventListener('click', async () => {
+  const v = $('#camVideo'); if (!v.videoWidth) return;
+  const t = currentPos();
+  const f = $('#camFlash'); f.style.opacity = '.8'; setTimeout(() => f.style.opacity = '0', 120);
+  try { await addPhotoNote(await shrinkImage(v), t); camShots++; $('#camCount').textContent = `${camShots} photo${camShots > 1 ? 's' : ''} · ${t != null ? fmt(t) : ''}`; }
+  catch (err) { toast(err.message || 'Could not take photo'); }
+});
+$('#photoIn').addEventListener('change', async e => {
+  const files = [...(e.target.files || [])]; e.target.value = '';
+  let n = 0;
+  for (const f of files) { try { await addPhotoNote(await shrinkImage(f), photoT ?? currentPos()); n++; } catch { toast('Could not add that photo'); } }
+  if (n) { setTab('notes'); toast(n > 1 ? `${n} photos added` : 'Photo added' + (photoT != null ? ' at ' + fmt(photoT) : '')); }
+});
+
+/* ---------- topics: split a lecture into sections ---------- */
+$('#topicBtn').addEventListener('click', () => {
+  if (!cur) return;
+  const count = cur.notes.filter(x => x.kind === 'topic').length + 1;
+  let text = input.value.trim(); const typed = !!text;
+  if (!text) text = `Topic ${count}`;
+  const note = { id: uid(), t: currentPos() ?? (cur.duration ? 0 : null), text, kind: 'topic', at: Date.now() };
+  cur.notes.push(note); sortNotes();
+  if (typed) { input.value = ''; input.style.height = ''; noteStartT = null; }
+  renderNotes(); renderTranscript(); touch(); setTab('notes');
+  const el = $(`#notesList [data-id="${note.id}"] .ntext`);
+  el?.scrollIntoView({ block: 'nearest' });
+  if (el && !typed) { el.focus(); getSelection().selectAllChildren(el); toast('New topic started. Type its name.'); }
+  else toast('New topic: ' + text);
+});
+
+/* ---------- search inside this recording ---------- */
+let findQ = '', hits = [], hitI = -1, pendingFind = '';
+const escapeRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+function hl(t) {
+  t = String(t ?? '');
+  if (!findQ) return esc(t);
+  let out = '', i = 0;
+  t.replace(new RegExp(escapeRe(findQ), 'gi'), (m, off) => { out += esc(t.slice(i, off)) + '<mark>' + esc(m) + '</mark>'; i = off + m.length; return m; });
+  return out + esc(t.slice(i));
+}
+function openFind(q = '') {
+  $('#findBar').hidden = false; $('#findIn').value = q; runFind(q); if (!q) $('#findIn').focus();
+}
+function closeFind() {
+  $('#findBar').hidden = true; findQ = ''; hits = []; hitI = -1;
+  if (cur) { renderNotes(); renderTranscript(); }
+}
+function runFind(q) {
+  findQ = (q || '').trim();
+  renderNotes(); renderTranscript();
+  hits = findQ ? [...new Set([...document.querySelectorAll('#notesList mark, #transcriptList mark')].map(m => m.closest('[data-id]')).filter(Boolean))] : [];
+  hits.sort((a, b) => (+a.dataset.t || 0) - (+b.dataset.t || 0));
+  hitI = -1;
+  $('#findCount').textContent = findQ ? (hits.length ? `${hits.length} found` : 'none') : '';
+  if (hits.length) goHit(0, false);
+}
+function goHit(i, seek = true) {
+  if (!hits.length) return;
+  hitI = (i + hits.length) % hits.length;
+  document.querySelectorAll('.hit-cur').forEach(x => x.classList.remove('hit-cur'));
+  const el = hits[hitI]; el.classList.add('hit-cur');
+  if (window.innerWidth <= 760) setTab(el.closest('#transcriptPane') ? 'transcript' : 'notes');
+  el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  $('#findCount').textContent = `${hitI + 1}/${hits.length}`;
+  const t = +el.dataset.t;
+  if (seek && isFinite(t) && el.dataset.t !== '' && cur?.hasAudio && cur.audioLocal && !rec) ensureMine().then(ok => { if (ok) { setPos(Math.max(0, t / 1000 - 1)); updatePlayUI(); } });
+}
+let findTimer = null;
+$('#findBtn').addEventListener('click', () => $('#findBar').hidden ? openFind('') : closeFind());
+$('#findIn').addEventListener('input', () => { clearTimeout(findTimer); findTimer = setTimeout(() => runFind($('#findIn').value), 200); });
+$('#findIn').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); goHit(e.shiftKey ? hitI - 1 : hitI + 1); }
+  if (e.key === 'Escape') closeFind();
+});
+$('#findNext').addEventListener('click', () => goHit(hitI + 1));
+$('#findPrev').addEventListener('click', () => goHit(hitI - 1));
+$('#findClose').addEventListener('click', closeFind);
+
+/* ---------- Bible references (for sermons) ---------- */
+const BOOKS = [
+  ['Genesis', 'genesis', 0, 'gen'], ['Exodus', 'exodus', 0, 'exod'], ['Leviticus', 'leviticus', 0, 'lev'], ['Numbers', 'numbers', 1, 'num'],
+  ['Deuteronomy', 'deuteronomy', 0, 'deut'], ['Joshua', 'joshua', 0, 'josh'], ['Judges', 'judges', 1], ['Ruth', 'ruth', 1],
+  ['Samuel', 'samuel', 0, 'sam', 2], ['Kings', 'kings', 1, '', 2], ['Chronicles', 'chronicles', 0, 'chron', 2], ['Ezra', 'ezra', 1],
+  ['Nehemiah', 'nehemiah', 0, 'neh'], ['Esther', 'esther', 0, 'esth'], ['Job', 'job', 1], ['Psalm', 'psalms?', 0, 'psa?'],
+  ['Proverbs', 'proverbs', 0, 'prov'], ['Ecclesiastes', 'ecclesiastes', 0, 'eccl?'], ['Song of Songs', 'song of (?:songs|solomon)', 0],
+  ['Isaiah', 'isaiah', 0, 'isa'], ['Jeremiah', 'jeremiah', 0, 'jer'], ['Lamentations', 'lamentations', 1, 'lam'], ['Ezekiel', 'ezekiel', 0, 'ezek'],
+  ['Daniel', 'daniel', 1, 'dan'], ['Hosea', 'hosea', 0, 'hos'], ['Joel', 'joel', 1], ['Amos', 'amos', 1], ['Obadiah', 'obadiah', 0],
+  ['Jonah', 'jonah', 1], ['Micah', 'micah', 0, 'mic'], ['Nahum', 'nahum', 0], ['Habakkuk', 'habakkuk', 0, 'hab'], ['Zephaniah', 'zephaniah', 0, 'zeph'],
+  ['Haggai', 'haggai', 0, 'hag'], ['Zechariah', 'zechariah', 0, 'zech'], ['Malachi', 'malachi', 0, 'mal'],
+  ['Matthew', 'matthew', 1, 'matt?'], ['Mark', 'mark', 1], ['Luke', 'luke', 1], ['John', 'john', 1, '', 3], ['Acts', 'acts', 1],
+  ['Romans', 'romans', 0, 'rom'], ['Corinthians', 'corinthians', 0, 'cor', 2], ['Galatians', 'galatians', 0, 'gal'], ['Ephesians', 'ephesians', 0, 'eph'],
+  ['Philippians', 'philippians', 0, 'phil'], ['Colossians', 'colossians', 0, 'col'], ['Thessalonians', 'thessalonians', 0, 'thess?', 2],
+  ['Timothy', 'timothy', 1, 'tim', 2], ['Titus', 'titus', 1], ['Philemon', 'philemon', 0, 'philem'], ['Hebrews', 'hebrews', 0, 'heb'],
+  ['James', 'james', 1, 'jas'], ['Peter', 'peter', 1, 'pet', 2], ['Jude', 'jude', 1], ['Revelation', 'revelations?', 1, 'rev'],
+];
+const BOOK_RE = new RegExp(String.raw`(?:\b(1|2|3|first|second|third|i{1,3})(?:st|nd|rd)?\s+)?\b(` +
+  BOOKS.map(b => b[1] + (b[3] ? '|' + b[3] + '\\.?' : '')).join('|') +
+  String.raw`)\s+(?:chapter\s+)?(\d{1,3})(?:\s*(?::|,?\s*(?:and\s+)?verses?|\bv\.?)\s*(\d{1,3})(?:\s*(?:-|–|to|through|and)\s*(\d{1,3}))?)?`, 'gi');
+const NUMW = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19, twenty: 20, thirty: 30, forty: 40, fifty: 50, sixty: 60, seventy: 70, eighty: 80, ninety: 90 };
+function wordsToDigits(s) {
+  // "chapter three verse sixteen" -> "chapter 3 verse 16"; "one hundred and nineteen" -> "119"
+  return s.replace(/\b[a-z]+(?:[\s-]+[a-z]+)*\b/gi, run => {
+    const toks = run.split(/([\s-]+)/); let out = '', num = null, lastKind = '';
+    const flush = () => { if (num != null) { out += String(num); num = null; lastKind = ''; } };
+    for (let i = 0; i < toks.length; i++) {
+      const tk = toks[i], w = tk.toLowerCase();
+      if (/^[\s-]+$/.test(tk)) { if (num == null) out += tk; else if (!NUMW[(toks[i + 1] || '').toLowerCase()] && !/^(hundred|and)$/i.test(toks[i + 1] || '')) { flush(); out += tk; } continue; }
+      const v = NUMW[w];
+      if (v != null) {
+        if (num == null) { num = v; lastKind = v >= 20 && v % 10 === 0 ? 'tens' : 'unit'; }
+        else if ((lastKind === 'tens' && v < 10) || (lastKind === 'hundred' && v < 100)) { num += v; lastKind = v >= 20 && v % 10 === 0 ? 'tens' : 'unit'; }
+        else { flush(); out += ' '; num = v; lastKind = v >= 20 && v % 10 === 0 ? 'tens' : 'unit'; }
+      } else if (w === 'hundred' && num != null && num < 10) { num *= 100; lastKind = 'hundred'; }
+      else if (w === 'and' && lastKind === 'hundred' && NUMW[(toks[i + 2] || '').toLowerCase()]) { /* skip */ }
+      else { flush(); out += tk; }
+    }
+    flush(); return out;
+  });
+}
+function findScriptures(s) {
+  const found = new Map();
+  const items = [...(s.fullTranscript || []), ...(s.transcript || []), ...(s.notes || []).filter(n => n.text)];
+  for (const it of items) {
+    const txt = wordsToDigits(it.text);
+    for (const m of txt.matchAll(BOOK_RE)) {
+      const [all, pre, bookRaw, ch, v1, v2] = m;
+      const b = BOOKS.find(x => new RegExp('^(?:' + x[1] + (x[3] ? '|' + x[3] + '\\.?' : '') + ')$', 'i').test(bookRaw));
+      if (!b) continue;
+      const isAbbr = !new RegExp('^(?:' + b[1] + ')$', 'i').test(bookRaw);
+      if ((b[2] || isAbbr) && !v1 && !/chapter/i.test(all)) continue;      // "Mark 5", "Job 2": only with a verse or the word "chapter"
+      const p = pre ? ({ first: 1, second: 2, third: 3, i: 1, ii: 2, iii: 3 }[pre.toLowerCase()] || +pre) : 0;
+      if (p && (!b[4] || p > b[4])) continue;
+      if (!p && b[4] && b[0] !== 'John') { /* e.g. "Corinthians 13:4" without 1/2: keep */ }
+      if (+ch < 1 || +ch > 150) continue;
+      const ref = `${p ? p + ' ' : ''}${b[0]} ${+ch}${v1 ? ':' + +v1 + (v2 ? '–' + +v2 : '') : ''}`;
+      const f = found.get(ref) || { ref, t: it.t, n: 0 };
+      f.n++; if (it.t != null && (f.t == null || it.t < f.t)) f.t = it.t;
+      found.set(ref, f);
+    }
+  }
+  return [...found.values()].sort((a, b) => (a.t ?? 1e15) - (b.t ?? 1e15));
+}
+function renderScriptures() {
+  const el = $('#scripts');
+  if (!cur || settings.scripture === false) { el.innerHTML = ''; return; }
+  const refs = findScriptures(cur);
+  if (!refs.length) { el.innerHTML = ''; return; }
+  const open = el.querySelector('details')?.open ?? true;
+  el.innerHTML = `<details class="scripts"${open ? ' open' : ''}><summary>📖 Scriptures mentioned (${refs.length})</summary><ul>` +
+    refs.map(r => `<li>${r.t != null ? `<button class="tchip" data-seek="${r.t}">${fmt(r.t)}</button>` : ''}<b>${esc(r.ref)}</b>${r.n > 1 ? `<small>×${r.n}</small>` : ''}</li>`).join('') + '</ul></details>';
+}
+$('#scripts').addEventListener('click', e => { const c = e.target.closest('.tchip'); if (c) seekTo(+c.dataset.seek); });
 
 /* ---------- transcript ----------
    Two transcripts are kept side by side: the live one (made while recording)
@@ -767,7 +1445,7 @@ function setTView(v) {
 }
 $('#tSwitch').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setTView(b.dataset.v); });
 function tHtml(x) {
-  return `<p class="tline" data-id="${x.id}" data-t="${x.t}"><button class="tchip" data-seek="${x.t}">${fmt(x.t)}</button><span class="ttext" contenteditable="true">${esc(x.text)}</span></p>`;
+  return `<p class="tline" data-id="${x.id}" data-t="${x.t}"><button class="tchip" data-seek="${x.t}">${fmt(x.t)}</button><span class="ttext" contenteditable="true">${hl(x.text)}</span></p>`;
 }
 function renderTranscript() {
   const el = $('#transcriptList');
@@ -776,7 +1454,15 @@ function renderTranscript() {
   if (!hasFull && tView === 'full') tView = 'live';
   document.querySelectorAll('#tSwitch button').forEach(b => b.classList.toggle('on', b.dataset.v === tView));
   const list = tList();
-  if (list.length) el.innerHTML = list.map(tHtml).join('');
+  if (list.length) {
+    // topic headings are woven into the transcript at their times
+    const topics = cur.notes.filter(n => n.kind === 'topic' && n.t != null).sort((a, b) => a.t - b.t);
+    const head = n => `<h4 class="thead"><button class="tchip" data-seek="${n.t}">${fmt(n.t)}</button>${esc(n.text)}</h4>`;
+    let html = '', ti = 0;
+    for (const x of list) { while (ti < topics.length && topics[ti].t <= x.t) html += head(topics[ti++]); html += tHtml(x); }
+    while (ti < topics.length) html += head(topics[ti++]);
+    el.innerHTML = html;
+  }
   else if (TX.job && TX.job.s === cur && tView === 'full') el.innerHTML = '';
   else if (tView === 'live' && hasFull && !rec) el.innerHTML = `<p class="hint">No live transcript for this recording. Switch to <b>Full</b> to see the one made from the audio.</p>`;
   else if (cur.hasAudio && cur.audioLocal && !rec) el.innerHTML = `<p class="hint">No transcript yet. Recall can write one from the recording, on this device and for free.<br><button class="btn primary" data-tx>Transcribe the recording</button></p>`;
@@ -784,13 +1470,14 @@ function renderTranscript() {
   else if (!settings.transcript) el.innerHTML = `<p class="hint">Live transcript is turned off in Settings.</p>`;
   else el.innerHTML = `<p class="hint">${cur.hasAudio ? 'No transcript for this recording.' : 'What’s said will be written here while you record.'}</p>`;
   $('#interim').textContent = '';
+  renderScriptures();
 }
 $('#transcriptList').addEventListener('click', e => {
   const chip = e.target.closest('.tchip'); if (chip) seekTo(+chip.dataset.seek);
 });
 editableHandlers($('#transcriptList'), () => tList());
 function addTranscript(t, text) {
-  const x = { id: uid(), t, text };
+  const x = { id: uid(), t, text: applyFixes(text, cur.folder) };
   cur.transcript.push(x);
   if (tView !== 'live') { touch(); return; }
   const el = $('#transcriptList');
@@ -887,6 +1574,7 @@ async function finalizeRecording() {
   $('#interim').textContent = '';
   if (cur && cur.id === s.id) { renderControls(); renderTranscript(); await loadAudio(); }
   toast('Saved');
+  if (settings.autoTranscribe) queueTranscription([s.id]);
   if (settings.clientId && settings.autoSync && Drive.hasToken()) syncAll(false);
 }
 $('#recBtn').addEventListener('click', startRecording);
@@ -1115,11 +1803,12 @@ $('#speedBtn').addEventListener('click', () => {
 /* ---------- mini player (keeps going when you leave the recording) ---------- */
 function placeMini() {
   const m = $('#mini');
-  if (!$('#home').hidden) { if (m.parentElement !== $('#home')) $('#home').appendChild(m); }
+  if (!$('#review').hidden) { if (m.parentElement !== $('#review')) $('#review').appendChild(m); }
+  else if (!$('#home').hidden) { if (m.parentElement !== $('#home')) $('#home').appendChild(m); }
   else { const c = $('#session .composer'); if (m.nextElementSibling !== c) c.before(m); }
 }
 function updateMini() {
-  const show = !!player.sid && !rec && (audio.currentTime > 0 || !audio.paused) && (!$('#home').hidden || !isMine());
+  const show = !!player.sid && !rec && (audio.currentTime > 0 || !audio.paused) && (!$('#home').hidden || !$('#review').hidden || !isMine());
   const m = $('#mini');
   if (m.hidden === !show && !show) { document.body.classList.remove('mini-on'); return; }
   m.hidden = !show; document.body.classList.toggle('mini-on', show && !$('#home').hidden);
@@ -1165,10 +1854,10 @@ document.addEventListener('keydown', e => {
    ========================================================= */
 const TJS_URL = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.0/dist/transformers.min.js';
 const WORKER_SRC = `
-let T = null;
+let T = null, libUrl = '';
 async function lib() {
   if (!T) {
-    try { T = await import('${TJS_URL}'); }
+    try { T = await import(libUrl || '${TJS_URL}'); }
     catch (e) { throw new Error('Could not download the transcription engine. Check your internet connection (only needed the first time). ' + ((e && e.message) || '')); }
     T.env.allowLocalModels = false;
   }
@@ -1203,7 +1892,7 @@ async function run(m) {
 }
 self.onmessage = async ({ data: m }) => {
   try {
-    if (m.type === 'load') { await load(m.size); self.postMessage({ type: 'ready' }); }
+    if (m.type === 'load') { if (m.lib) libUrl = m.lib; await load(m.size); self.postMessage({ type: 'ready' }); }
     else if (m.type === 'run') {
       let out;
       try { out = await run(m); }
@@ -1213,7 +1902,20 @@ self.onmessage = async ({ data: m }) => {
   } catch (e) { self.postMessage({ type: 'error', message: String((e && e.message) || e) }); }
 };`;
 
-const TX = { worker: null, job: null, pending: null };
+const TX = { worker: null, job: null, pending: null, libUrl: '' };
+// Keep our own copy of the speech library (~0.6 MB) so transcription also works offline later.
+async function txLibUrl() {
+  if (TX.libUrl) return TX.libUrl;
+  let res = null;
+  try {
+    const c = await caches.open('recall-lib');
+    res = await c.match(TJS_URL);
+    if (!res) { res = await fetch(TJS_URL); if (res.ok) await c.put(TJS_URL, res.clone()); }
+  } catch { res = await fetch(TJS_URL).catch(() => null); }
+  if (!res || !res.ok) throw new Error('Could not download the transcription engine. Check your internet connection (only needed the first time).');
+  TX.libUrl = URL.createObjectURL(new Blob([await res.text()], { type: 'text/javascript' }));
+  return TX.libUrl;
+}
 function txWorker() {
   if (!TX.worker) {
     TX.worker = new Worker(URL.createObjectURL(new Blob([WORKER_SRC], { type: 'text/javascript' })), { type: 'module' });
@@ -1244,7 +1946,7 @@ function txCancel() {
   if (TX.worker) { TX.worker.terminate(); TX.worker = null; }
   TX.pending?.reject(new Error('cancelled')); TX.pending = null;
 }
-function setTx(msg, frac) { if (!TX.job) return; TX.job.msg = msg; TX.job.frac = frac; showTxJob(); }
+function setTx(msg, frac) { if (!TX.job) return; TX.job.msg = msg; TX.job.frac = frac; showTxJob(); updateTxGlobal(); }
 function showTxJob() {
   const on = !!(TX.job && cur && TX.job.s === cur);
   $('#txJob').hidden = !on;
@@ -1277,14 +1979,58 @@ const whisperLang = code => WHISPER_LANG[(code || '').slice(0, 2)] || null;
 const TX_JUNK = /^(\[.*\]|\(.*\)|[♪\s.]+|thank you\.?|thanks for watching!?|thank you for watching\.?|please subscribe.*|субтитры.*|продолжение следует\.*|редактор субтитров.*|спасибо за просмотр.*)$/i;
 function rms(a) { let s = 0; for (let i = 0; i < a.length; i += 8) s += a[i] * a[i]; return Math.sqrt(s / (a.length / 8)); }
 
+// transformers.js keeps downloaded model files in Cache Storage ("transformers-cache"),
+// so each model is downloaded once per device. This checks whether it's already there.
+async function modelSaved(size) {
+  try {
+    const keys = await (await caches.open('transformers-cache')).keys();
+    return keys.some(r => r.url.includes('/whisper-' + size + '/') && /\.onnx$/.test(r.url));
+  } catch { return false; }
+}
+/* A queue, so several recordings (a whole subject, or each lecture as it ends) are done one after another. */
+TX.queue = [];
+function queueTranscription(ids, front = false) {
+  for (const id of ids) {
+    if (TX.job?.s.id === id || TX.queue.includes(id)) continue;
+    front ? TX.queue.unshift(id) : TX.queue.push(id);
+  }
+  updateTxGlobal(); runQueue();
+}
+async function runQueue() {
+  if (TX.running) return; TX.running = true;
+  try {
+    while (TX.queue.length) {
+      const id = TX.queue.shift();
+      const s = (cur && cur.id === id) ? cur : await DB.get(id);
+      if (!s || !s.hasAudio || !s.audioLocal || s.pendingDelete) continue;
+      await transcribeSession(s);
+    }
+  } finally { TX.running = false; updateTxGlobal(); if (!rec) keepAwake(false); if (!$('#home').hidden) renderList(); }
+}
+function updateTxGlobal() {
+  const el = $('#txGlobal'); if (!el) return;
+  const waiting = TX.queue.length;
+  if (!TX.job && !waiting) { el.hidden = true; return; }
+  el.hidden = false;
+  $('#txGMsg').textContent = TX.job
+    ? `Transcribing “${TX.job.s.title}” · ${Math.round((TX.job.frac || 0) * 100)}%${waiting ? ` · ${waiting} more waiting` : ''}. Keep Recall open.`
+    : `${waiting} waiting to be transcribed…`;
+}
+$('#txGStop').addEventListener('click', () => { TX.queue = []; txCancel(); updateTxGlobal(); });
 async function transcribeRecording() {
-  if (!cur || rec || TX.job) return;
+  if (!cur || rec) return;
+  if (TX.job?.s.id === cur.id || TX.queue.includes(cur.id)) { toast('Already on its way'); return; }
   if (!cur.hasAudio || !cur.audioLocal) { toast('Download the audio first'); return; }
   if (cur.fullTranscript?.length && cur.fullLang === cur.lang && !confirm('Make the full transcript again? Your live transcript stays as it is.')) return;
-  const s = cur, job = TX.job = { s, cancelled: false, msg: 'Preparing audio…', frac: 0 };
+  if (TX.job) toast('Queued. It starts as soon as the current transcription finishes.', 3500);
+  queueTranscription([cur.id], true);
+}
+async function transcribeSession(s) {
+  const job = TX.job = { s, cancelled: false, msg: 'Preparing audio…', frac: 0 };
   const oldTranscript = s.fullTranscript || [];
   s.fullTranscript = s.fullTranscript || [];
-  setTab('transcript'); if (cur === s) setTView('full'); renderControls(); keepAwake(true);
+  if (cur === s) { setTab('transcript'); setTView('full'); renderControls(); }
+  keepAwake(true); updateTxGlobal();
   let added = 0;
   try {
     const blob = await DB.getAudio(s.id);
@@ -1292,11 +2038,14 @@ async function transcribeRecording() {
     const pcm = await decodeTo16k(blob);
     if (job.cancelled) return;
     const size = settings.txModel || 'base';
-    setTx('Loading speech model…', 0);
-    await txCall({ type: 'load', size }, p => {
-      if (p.status === 'progress_total' && p.total) setTx(`Downloading speech model (first time only)… ${Math.round(p.loaded / p.total * 100)}%`, p.loaded / p.total);
-      else if (p.status === 'progress' && p.total && !job.sawTotal) setTx(`Downloading speech model (first time only)… ${Math.round(p.progress || 0)}%`, (p.progress || 0) / 100);
-      if (p.status === 'progress_total') job.sawTotal = true;
+    const saved = await modelSaved(size);
+    const what = saved ? 'Loading speech model (already on this device)…' : 'Downloading speech model (one time only)…';
+    setTx(what, 0);
+    await txCall({ type: 'load', size, lib: await txLibUrl() }, p => {
+      let frac = null;
+      if (p.status === 'progress_total' && p.total) { frac = p.loaded / p.total; job.sawTotal = true; }
+      else if (p.status === 'progress' && p.total && !job.sawTotal) frac = (p.progress || 0) / 100;
+      if (frac != null) setTx(saved ? what : `${what} ${Math.round(frac * 100)}%`, frac);
     });
     s.lang = s.lang || settings.lang; s.fullLang = s.lang;
     const SEG = 16000 * 60, total = pcm.length, lang = whisperLang(s.lang);
@@ -1308,7 +2057,7 @@ async function transcribeRecording() {
       if (seg.length < 1600 || rms(seg) < 0.002) continue;          // skip silence
       const r = await txCall({ type: 'run', audio: seg, language: lang, size });
       for (const c of r.chunks) {
-        const text = (c.text || '').trim();
+        const text = applyFixes((c.text || '').trim(), s.folder);
         if (!text || TX_JUNK.test(text) || text === last) continue;
         last = text;
         const x = { id: uid(), t: Math.round(off / 16 + (c.timestamp?.[0] || 0) * 1000), text };
@@ -1322,7 +2071,7 @@ async function transcribeRecording() {
     }
     if (job.cancelled) return;
     s.updatedAt = Date.now(); await DB.put(s);
-    toast(added ? 'Transcript ready' : 'No speech found in this recording', 3500);
+    toast(added ? `Transcript ready: ${s.title}` : `No speech found in “${s.title}”`, 3500);
   } catch (e) {
     if (!job.cancelled) toast('Transcription failed: ' + (e.message || e), 6000);
     if (!added) s.fullTranscript = oldTranscript;                   // put the old one back if nothing new came through
@@ -1330,8 +2079,9 @@ async function transcribeRecording() {
     if (job.cancelled) toast(added ? 'Stopped. Kept what was transcribed so far.' : 'Transcription cancelled', 3500);
     if (job.cancelled && !added) s.fullTranscript = oldTranscript;
     s.updatedAt = Date.now(); await DB.put(s).catch(() => {});
-    TX.job = null; if (!rec) keepAwake(false);
-    if (cur === s) { renderTranscript(); renderControls(); scheduleAutoSync(); }
+    TX.job = null; updateTxGlobal();
+    if (cur === s) { renderTranscript(); renderControls(); }
+    scheduleAutoSync();
   }
 }
 $('#txBtn').addEventListener('click', transcribeRecording);
@@ -1380,6 +2130,7 @@ async function importOne(f) {
   if (!duration) { toast(`“${f.name}” couldn’t be opened as audio`, 4000); return null; }
   const s = newSession();
   Object.assign(s, { title: f.name.replace(/\.[^.]+$/, '') || s.title, createdAt: f.lastModified || Date.now(), duration, mimeType: type, hasAudio: true, audioLocal: true, imported: true });
+  if (f.lastModified) await applyTimetable(s, new Date(f.lastModified));
   await DB.putAudio(s.id, blob); await DB.put(s);
   return s.id;
 }
@@ -1401,24 +2152,35 @@ window.addEventListener('drop', e => {
 $('#menuList [data-act=copy]').innerHTML = `${I.copy} Copy notes & transcript`;
 $('#menuList [data-act=md]').innerHTML = `${I.doc} Download as text (.md)`;
 $('#menuList [data-act=transcribe]').innerHTML = `${I.doc} Make / redo full transcript`;
+$('#menuList [data-act=replace]').innerHTML = `${I.search} Find & replace…`;
 $('#menuList [data-act=audio]').innerHTML = `${I.down} Download audio`;
 $('#menuList [data-act=freeaudio]').innerHTML = `${I.broom} Remove audio from this device`;
 $('#menuList [data-act=delete]').innerHTML = `${I.trash} Delete recording`;
 $('#moreBtn').addEventListener('click', e => { e.stopPropagation(); $('#menuList').hidden = !$('#menuList').hidden; });
 document.addEventListener('click', e => { if (!e.target.closest('.menu')) $('#menuList').hidden = true; });
+const photoName = (s, n) => `${fileBase(s)} - photo ${fmt(n.t ?? 0).replace(/:/g, '-')} ${n.photo.slice(-4)}.jpg`;
 function toMarkdown(s) {
   const L = [`# ${s.title}`, '', [s.folder ? `Subject: ${s.folder}` : '', dateStr(s.createdAt), fmt(s.duration), langName(s.lang || settings.lang)].filter(Boolean).join(' · '), ''];
+  const topics = (s.notes || []).filter(n => n.kind === 'topic' && n.t != null).sort((a, b) => a.t - b.t);
+  if (topics.length) { L.push('## Topics', ''); for (const tp of topics) L.push(`- [${fmt(tp.t)}] ${tp.text}`); L.push(''); }
   L.push('## My notes', '');
   if (!s.notes.length) L.push('_No notes_');
-  for (const n of s.notes) L.push(`- ${n.t != null ? `[${fmt(n.t)}] ` : ''}${n.star ? '★ ' : ''}${n.text.replace(/\n/g, '\n  ')}`);
-  L.push('', '## Transcript', '');
-  if (s.fullTranscript?.length) {
-    L.push('_Made from the recording_', '');
-    for (const x of s.fullTranscript) L.push(`[${fmt(x.t)}] ${x.text}`, '');
-    L.push('## Live transcript', '');
+  for (const n of s.notes) {
+    const tt = n.t != null ? `[${fmt(n.t)}] ` : '';
+    if (n.kind === 'topic') L.push('', `### § ${n.text} ${tt.trim()}`, '');
+    else if (n.photo) L.push(`- ${tt}📷 Photo${n.text ? ': ' + n.text.replace(/\n/g, ' ') : ''} (file: ${photoName(s, n)})`);
+    else L.push(`- ${tt}${n.star ? '★ ' : ''}${n.text.replace(/\n/g, '\n  ')}`);
   }
+  const refs = settings.scripture !== false ? findScriptures(s) : [];
+  if (refs.length) { L.push('', '## Scriptures mentioned', ''); for (const r of refs) L.push(`- ${r.ref}${r.t != null ? ` [${fmt(r.t)}]` : ''}`); }
+  const weave = list => {
+    let ti = 0;
+    for (const x of list) { while (ti < topics.length && topics[ti].t <= x.t) L.push(`### § ${topics[ti++].text}`, ''); L.push(`[${fmt(x.t)}] ${x.text}`, ''); }
+  };
+  L.push('', '## Transcript', '');
+  if (s.fullTranscript?.length) { L.push('_Made from the recording_', ''); weave(s.fullTranscript); L.push('## Live transcript', ''); }
   if (!s.transcript.length) L.push('_No live transcript_');
-  for (const x of s.transcript) L.push(`[${fmt(x.t)}] ${x.text}`, '');
+  weave(s.transcript);
   return L.join('\n');
 }
 $('#menuList').addEventListener('click', async e => {
@@ -1426,6 +2188,7 @@ $('#menuList').addEventListener('click', async e => {
   $('#menuList').hidden = true; await flushSave();
   const act = b.dataset.act;
   if (act === 'transcribe') return transcribeRecording();
+  if (act === 'replace') return openReplace();
   if (act === 'copy') {
     try { await navigator.clipboard.writeText(toMarkdown(cur)); toast('Copied'); } catch { toast('Could not copy'); }
   } else if (act === 'md') {
@@ -1552,7 +2315,7 @@ const Drive = {
   async listMd() {
     let out = [], pageToken = '';
     do {
-      const q = encodeURIComponent(`appProperties has { key='kind' and value='md' } and trashed=false`);
+      const q = encodeURIComponent(`(appProperties has { key='kind' and value='md' } or appProperties has { key='kind' and value='photo' }) and trashed=false`);
       const j = await (await this.api(`files?q=${q}&pageSize=1000&fields=nextPageToken,files(id,name,appProperties,parents)${pageToken ? '&pageToken=' + pageToken : ''}`)).json();
       out = out.concat(j.files || []); pageToken = j.nextPageToken || '';
     } while (pageToken);
@@ -1572,8 +2335,8 @@ function setSyncUI(state, extra) {
 }
 const fileBase = s => `${new Date(s.createdAt).toISOString().slice(0, 10)} ${fileSafe(s.title)}`;
 function sessionData(s) {
-  const { id, title, createdAt, updatedAt, duration, mimeType, lang, notes, transcript, fullTranscript, hasAudio, folder, fullLang } = s;
-  return { app: 'recall', v: 1, id, title, createdAt, updatedAt, duration, mimeType, lang, notes, transcript, fullTranscript: fullTranscript || [], hasAudio, folder: folder || '', fullLang: fullLang || '' };
+  const { id, title, createdAt, updatedAt, duration, mimeType, lang, notes, transcript, fullTranscript, hasAudio, folder, fullLang, lectureNo, part } = s;
+  return { app: 'recall', v: 1, id, title, createdAt, updatedAt, duration, mimeType, lang, notes, transcript, fullTranscript: fullTranscript || [], hasAudio, folder: folder || '', fullLang: fullLang || '', lectureNo: lectureNo || 0, part: part || 0 };
 }
 async function syncAll(interactive = true) {
   if (syncing) return;
@@ -1586,22 +2349,25 @@ async function syncAll(interactive = true) {
     const folder = await Drive.folder();
     const files = (await Drive.list(folder)).concat(await Drive.listMd().catch(() => []));
     const remote = {};
-    for (const f of files) { const p = f.appProperties || {}; if (!p.sid) continue; (remote[p.sid] ||= {})[p.kind] = f; }
+    for (const f of files) {
+      const p = f.appProperties || {}; if (!p.sid) continue;
+      if (p.kind === 'photo') ((remote[p.sid] ||= {}).photos ||= []).push(f); else (remote[p.sid] ||= {})[p.kind] = f;
+    }
     const local = await DB.all(), seen = new Set();
     for (const s of local) {
       seen.add(s.id);
       if (s.recording || (rec && cur?.id === s.id)) continue;
       const r = remote[s.id] || {};
       if (s.pendingDelete) {
-        for (const f of [r.json, r.audio, r.md]) if (f) await Drive.trash(f.id);
+        for (const f of [r.json, r.audio, r.md, ...(r.photos || [])]) if (f) await Drive.trash(f.id);
         await removeLocal(s.id); continue;
       }
       if (!r.json) {
         if (s.driveJsonId && s.driveFolderId === folder) { await removeLocal(s.id); if (cur?.id === s.id) changedOpen = 'deleted'; continue; }  // deleted on another device
-        await pushSession(s, folder, null, r.audio, false, r.md); up++;
+        await pushSession(s, folder, null, r.audio, false, r.md, r.photos); up++;
       } else {
         const rUpd = Number(r.json.appProperties?.updatedAt || 0);
-        if ((s.updatedAt || 0) > rUpd) { await pushSession(s, folder, r.json, r.audio, false, r.md); up++; }
+        if ((s.updatedAt || 0) > rUpd || (rUpd === (s.updatedAt || 0) && s.notes.some(n => n.photo && !n.photoDrive))) { await pushSession(s, folder, r.json, r.audio, false, r.md, r.photos); up++; }
         else if (rUpd > (s.updatedAt || 0)) { await pullSession(r.json, folder, s, r.audio); down++; if (cur?.id === s.id) changedOpen = true; }
         else if (s.hasAudio && s.audioLocal && !r.audio) { await pushSession(s, folder, r.json, null, true); up++; }
         else await patchLocal(s.id, { driveJsonId: r.json.id, driveFolderId: folder, driveAudioId: r.audio?.id || null });
@@ -1636,8 +2402,35 @@ async function pushMdOnce(s, root, rMd) {
     await Drive.multipart('PATCH', `https://www.googleapis.com/upload/drive/v3/files/${rMd.id}?uploadType=multipart&fields=id${move}`, meta, blob);
   } else await Drive.multipart('POST', 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', { ...meta, parents: [dir], mimeType: 'text/markdown' }, blob);
 }
-async function pushSession(s, folder, rJson, rAudio, audioOnly, rMd) {
+async function pushPhotos(s, root, rPhotos) {
+  if (!s.notes.some(n => n.photo) && !rPhotos.length) return;
+  const dir = await Drive.subfolder(root, cleanFolder(s.folder) || 'No folder');
+  const byPid = new Map(rPhotos.map(f => [f.appProperties.pid, f])), ids = {};
+  for (const n of s.notes) {
+    if (!n.photo) continue;
+    const r = byPid.get(n.photo);
+    if (r) {
+      ids[n.photo] = r.id;
+      if (r.parents && !r.parents.includes(dir))      // subject changed: move the photo too
+        await Drive.api(`files/${r.id}?addParents=${dir}&removeParents=${r.parents.join(',')}&fields=id`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: photoName(s, n) }) });
+      continue;
+    }
+    const blob = await DB.getPhoto(n.photo); if (!blob) continue;
+    setSyncUI('syncing', 'Uploading photos…');
+    const f = await Drive.multipart('POST', 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',
+      { name: photoName(s, n), parents: [dir], mimeType: 'image/jpeg', appProperties: { sid: s.id, kind: 'photo', pid: n.photo } }, blob);
+    ids[n.photo] = f.id;
+  }
+  const keep = new Set(s.notes.filter(n => n.photo).map(n => n.photo));
+  for (const r of rPhotos) if (!keep.has(r.appProperties.pid)) await Drive.trash(r.id);      // photo deleted in Recall
+  const mark = list => { for (const n of list || []) if (n.photo && ids[n.photo]) n.photoDrive = ids[n.photo]; };
+  mark(s.notes);
+  const fresh = await DB.get(s.id); if (fresh) { mark(fresh.notes); await DB.put(fresh); }
+  if (cur && cur.id === s.id) mark(cur.notes);
+}
+async function pushSession(s, folder, rJson, rAudio, audioOnly, rMd, rPhotos) {
   const fields = { driveFolderId: folder };
+  if (!audioOnly) await pushPhotos(s, folder, rPhotos || []);
   if (!audioOnly) {
     const meta = { name: fileBase(s) + '.json', appProperties: { sid: s.id, kind: 'json', updatedAt: String(s.updatedAt) } };
     const blob = new Blob([JSON.stringify(sessionData(s), null, 1)], { type: 'application/json' });
@@ -1682,7 +2475,7 @@ $('#dlAudioBtn').addEventListener('click', async () => {
 $('#syncBtn').addEventListener('click', () => settings.clientId ? syncAll(true) : openSettings());
 let autoSyncTimer = null;
 function scheduleAutoSync() {
-  if (!settings.clientId || !settings.autoSync || rec) return;
+  if (!settings.clientId || !settings.autoSync || rec || TX.job) return;
   clearTimeout(autoSyncTimer);
   autoSyncTimer = setTimeout(() => { if (Drive.hasToken() && !rec) syncAll(false); }, 20000);
 }
@@ -1698,6 +2491,9 @@ function openSettings() {
   $('#setClient').value = settings.clientId;
   $('#setAuto').checked = settings.autoSync;
   $('#setModel').value = settings.txModel || 'base';
+  $('#setAutoTx').checked = !!settings.autoTranscribe; $('#setTT').checked = settings.autoTimetable !== false; $('#setScripture').checked = settings.scripture !== false;
+  renderTT();
+  showModelStatus();
   $('#originCode').textContent = location.origin;
   $('#srSupport').textContent = SR ? 'Uses your browser’s free built-in speech recognition. Needs internet. Works best in Chrome on a laptop; on phones it may be patchy — the audio always records either way.'
     : 'This browser has no built-in speech recognition. Try Chrome or Safari for live transcripts. Audio and notes still work.';
@@ -1713,7 +2509,14 @@ $('#closeSettings').addEventListener('click', () => $('#settingsDlg').close());
 $('#setTranscript').addEventListener('change', e => { settings.transcript = e.target.checked; saveSettings(); if (cur) renderTranscript(); });
 $('#setLang').addEventListener('change', e => { settings.lang = e.target.value; saveSettings(); });
 $('#setAuto').addEventListener('change', e => { settings.autoSync = e.target.checked; saveSettings(); });
-$('#setModel').addEventListener('change', e => { settings.txModel = e.target.value; saveSettings(); });
+$('#setAutoTx').addEventListener('change', e => { settings.autoTranscribe = e.target.checked; saveSettings(); });
+$('#setTT').addEventListener('change', e => { settings.autoTimetable = e.target.checked; saveSettings(); updateFab(); });
+$('#setScripture').addEventListener('change', e => { settings.scripture = e.target.checked; saveSettings(); if (cur) renderScriptures(); });
+$('#setModel').addEventListener('change', e => { settings.txModel = e.target.value; saveSettings(); showModelStatus(); });
+async function showModelStatus() {
+  const size = settings.txModel || 'base', saved = await modelSaved(size);
+  $('#modelStatus').textContent = saved ? '✓ This model is saved on this device. It won’t download again.' : 'Not downloaded yet. It downloads once, the first time you transcribe.';
+}
 $('#setClient').addEventListener('change', e => {
   const v = e.target.value.trim();
   if (v !== settings.clientId) { settings.clientId = v; settings.driveConnected = false; Drive.forget(); saveSettings(); if (v) Drive.loadGis().catch(() => {}); setSyncUI(); }
@@ -1733,9 +2536,12 @@ $('#disconnectBtn').addEventListener('click', () => {
    START
    ========================================================= */
 (async function init() {
-  $('#folderIcon').innerHTML = I.folder; $('#settingsBtn').innerHTML = I.cog; $('#importBtn').innerHTML = `${I.upload}<span class="txt">Import</span>`; $('#backBtn').innerHTML = I.back; $('#moreBtn').innerHTML = I.more;
+  $('#folderIcon').innerHTML = I.folder; $('#rvBack').innerHTML = I.back; $('#settingsBtn').innerHTML = I.cog; $('#importBtn').innerHTML = `${I.upload}<span class="txt">Import</span>`; $('#backBtn').innerHTML = I.back; $('#moreBtn').innerHTML = I.more;
   $('#pauseBtn').innerHTML = I.pause; $('#stopBtn').innerHTML = `${I.stop}<span class="txt">Stop</span>`;
-  $('#markBtn').innerHTML = `${I.star}<span class="txt">Mark</span>`;
+  $('#markBtn').innerHTML = `${I.star}<span>Mark</span>`;
+  $('#photoBtn').innerHTML = `${I.camera}<span>Photo</span>`;
+  $('#topicBtn').innerHTML = `${I.topic}<span>Topic</span>`;
+  $('#findBtn').innerHTML = I.search;
   try { await DB.open(); } catch (e) { document.body.innerHTML = '<p style="padding:24px">Recall can’t store data in this browser (private mode?). Please open it in a normal window.</p>'; return; }
   navigator.storage?.persist?.().catch(() => {});
   await recoverInterrupted();
