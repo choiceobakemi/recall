@@ -1,5 +1,5 @@
 // Recall service worker — makes the app open offline. Your data is in IndexedDB, not here.
-const CACHE = 'recall-v9';
+const CACHE = 'recall-v10';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => {

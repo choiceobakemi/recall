@@ -500,7 +500,7 @@ mark{background:#ffe58a;color:inherit;border-radius:3px;padding:0 1px}
 const FOLDER_NAME = 'Recall Notes';
 const SCOPE = 'https://www.googleapis.com/auth/drive.file';
 const LANGS = [
-  ['en-US','English (US)'],['en-GB','English (UK)'],['en-NG','English (Nigeria)'],['ru-RU','Русский'],
+  ['en-US','English (US)'],['en-GB','English (UK)'],['en-NG','English (Nigeria)'],['en-RU','English (Russian accent)'],['ru-RU','Русский'],
   ['fr-FR','Français'],['de-DE','Deutsch'],['es-ES','Español'],['pt-BR','Português (BR)'],
   ['it-IT','Italiano'],['zh-CN','中文 (普通话)'],['ar-SA','العربية'],['tr-TR','Türkçe']
 ];
@@ -1493,6 +1493,8 @@ function addTranscript(t, text) {
    RECORDING
    ========================================================= */
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+// browsers' live recognition has no 'English with a Russian accent', so it listens as US English
+const srLang = c => c === 'en-RU' ? 'en-US' : c;
 function pickMime() {
   if (!window.MediaRecorder?.isTypeSupported) return '';
   // mp4/AAC first: plays on every device (iPhone, Mac, Android, Windows)
@@ -1643,7 +1645,7 @@ function startTranscript() {
   rec.tStatus = '';
   if (!SR || !settings.transcript || rec.tDisabled) { rec.tStatus = !SR ? 'no live transcript in this browser' : (rec.tDisabled ? rec.tDisabledMsg : ''); return; }
   const r = new SR();
-  r.lang = cur.lang || settings.lang; r.continuous = true; r.interimResults = true; r.maxAlternatives = 1;
+  r.lang = srLang(cur.lang || settings.lang); r.continuous = true; r.interimResults = true; r.maxAlternatives = 1;
   let starts = {};
   r.onstart = () => { starts = {}; if (rec) rec.tStatus = 'transcribing'; };
   r.onresult = e => {
@@ -2037,9 +2039,11 @@ async function transcribeSession(s) {
     if (!blob) throw new Error('Audio not found on this device');
     const pcm = await decodeTo16k(blob);
     if (job.cancelled) return;
-    const size = settings.txModel || 'base';
+    let size = settings.txModel || 'base';
+    const accented = (s.lang || settings.lang) === 'en-RU';
+    if (accented) size = IS_MOBILE ? (size === 'tiny' ? 'base' : size) : 'small';   // bigger models cope far better with accents
     const saved = await modelSaved(size);
-    const what = saved ? 'Loading speech model (already on this device)…' : 'Downloading speech model (one time only)…';
+    const what = (saved ? 'Loading speech model (already on this device)…' : `Downloading ${accented && size === 'small' ? 'the accurate speech model for accented English' : 'speech model'} (one time only)…`);
     setTx(what, 0);
     await txCall({ type: 'load', size, lib: await txLibUrl() }, p => {
       let frac = null;
