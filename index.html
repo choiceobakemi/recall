@@ -272,6 +272,15 @@ mark{background:#ffe58a;color:inherit;border-radius:3px;padding:0 1px}
 .fab{max-width:calc(100vw - 32px)}
 .fab .lbl{text-align:left;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fab .lbl small{display:block;font-size:11px;font-weight:500;opacity:.9;margin-top:-2px}
+/* trim */
+.trim-row{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;margin:4px 0 4px}
+.trim-row input[type=text]{height:40px;border-radius:10px;border:1px solid var(--line);background:var(--bg);padding:0 12px;font-variant-numeric:tabular-nums;font-size:16px;width:100%;min-width:0}
+.trim-row .btn{height:40px;padding:0 12px;font-size:14px}
+.trim-range{width:100%;accent-color:var(--accent);margin:2px 0 10px}
+.trim-bar{position:relative;height:10px;border-radius:99px;background:var(--line);margin:6px 0 14px;overflow:hidden}
+.trim-bar span{position:absolute;top:0;bottom:0;background:var(--accent);border-radius:99px}
+.trim-len{font-size:15px;font-weight:600;margin:8px 0}
+#trimDlg .mini{margin-left:6px}
 #toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:.2s;max-width:calc(100vw - 32px);z-index:50;text-align:center}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 </style>
@@ -319,6 +328,7 @@ mark{background:#ffe58a;color:inherit;border-radius:3px;padding:0 1px}
         <button data-act="transcribe"></button>
         <button data-act="replace"></button>
         <button data-act="audio"></button>
+        <button data-act="trim"></button>
         <button data-act="freeaudio"></button>
         <button data-act="delete" class="danger"></button>
       </div>
@@ -480,6 +490,25 @@ mark{background:#ffe58a;color:inherit;border-radius:3px;padding:0 1px}
   </div>
   <div class="dlg-foot" style="gap:8px"><button id="frClose" class="btn">Close</button><button id="frGo" class="btn primary">Replace all</button></div>
 </dialog>
+<dialog id="trimDlg">
+  <div class="dlg">
+    <h2>Trim audio</h2>
+    <p class="small">Keep only the part you need. Everything before <b>Start</b> and after <b>End</b> is cut off, which also makes the file smaller and transcription faster.</p>
+    <div class="trim-bar"><span id="trimKeep"></span></div>
+    <div class="field"><label for="trimStartTxt">Start (h:mm:ss)</label>
+      <div class="trim-row"><input type="text" id="trimStartTxt" inputmode="numeric" autocomplete="off"><button class="btn" data-now="start" title="Use where the player is now">Use playback position</button><button class="btn" data-listen="start" aria-label="Listen from the start point">▶</button></div>
+      <input type="range" id="trimStart" class="trim-range" min="0" step="1000" aria-label="Start"></div>
+    <div class="field"><label for="trimEndTxt">End (h:mm:ss)</label>
+      <div class="trim-row"><input type="text" id="trimEndTxt" inputmode="numeric" autocomplete="off"><button class="btn" data-now="end" title="Use where the player is now">Use playback position</button><button class="btn" data-listen="end" aria-label="Listen to the last 10 seconds before the end point">▶</button></div>
+      <input type="range" id="trimEnd" class="trim-range" min="0" step="1000" aria-label="End"></div>
+    <p class="small" id="trimHints"></p>
+    <div class="trim-len" id="trimLen"></div>
+    <label class="check"><input type="checkbox" id="trimKeepOrig" checked> Download the untrimmed original first, just in case</label>
+    <p class="small">Your notes and photos outside the kept part aren't deleted: they stay, without a time. Transcript lines outside it are removed. Everything else moves to match the new times.</p>
+    <p class="small" id="trimStatus"></p>
+  </div>
+  <div class="dlg-foot" style="gap:8px"><button id="trimCancel" class="btn">Cancel</button><button id="trimGo" class="btn primary">Trim</button></div>
+</dialog>
 <dialog id="photoDlg">
   <img id="pvImg" alt="">
   <div class="pv-row"><span id="pvCap"></span>
@@ -528,6 +557,7 @@ const I = {
   topic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h7"/></svg>',
   search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
   book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>',
+  scissors:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"/></svg>',
   broom:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16M6 16l4-10 4 10M8 12h4"/></svg>',
 };
 
@@ -1087,6 +1117,7 @@ function renderControls() {
   $('#txBtn').title = hasFull ? 'Make the full transcript again from the audio (in ' + langName(cur.lang || settings.lang) + ')' : 'Make a full transcript from the audio';
   $('#menuList [data-act=audio]').hidden = !hasLocal;
   $('#menuList [data-act=freeaudio]').hidden = !(hasLocal && cur.driveAudioId);
+  $('#menuList [data-act=trim]').hidden = !hasLocal || recording;
   updateMini();
 }
 function setTab(t) {
@@ -2150,6 +2181,187 @@ window.addEventListener('drop', e => {
   importFiles([...e.dataTransfer.files]);
 });
 
+
+/* =========================================================
+   TRIM AUDIO (ffmpeg, runs on this device, no re-encoding)
+   ========================================================= */
+const FF_BASE = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm/';
+const FF_WORKER = `
+let core = null;
+self.onmessage = async ({ data: m }) => {
+  try {
+    if (!core) {
+      const mod = await import(m.coreUrl);
+      core = await mod.default({ mainScriptUrlOrBlob: m.coreUrl + '#' + btoa(JSON.stringify({ wasmURL: m.wasmUrl, workerURL: '' })) });
+      core.setLogger(() => {});
+    }
+    const inName = 'in.' + m.ext, outName = 'out.' + m.ext;
+    core.FS.writeFile(inName, new Uint8Array(m.data));
+    // browser-made webm/ogg files have no seek index, so seek after reading (still no re-encoding)
+    const seekAfter = m.ext === 'webm' || m.ext === 'ogg';
+    const args = seekAfter ? ['-i', inName, '-ss', String(m.start)] : ['-ss', String(m.start), '-i', inName];
+    args.push('-t', String(m.dur), '-map', '0:a', '-c', 'copy', '-avoid_negative_ts', 'make_zero');
+    if (m.ext === 'mp4') args.push('-movflags', '+faststart');
+    args.push(outName);
+    core.exec(...args); const ret = core.ret; core.reset();
+    if (ret !== 0) throw new Error('ffmpeg could not cut this file (code ' + ret + ')');
+    const out = core.FS.readFile(outName);
+    try { core.FS.unlink(inName); core.FS.unlink(outName); } catch (e) {}
+    self.postMessage({ type: 'done', data: out.buffer }, [out.buffer]);
+  } catch (e) { self.postMessage({ type: 'error', message: String((e && e.message) || e) }); }
+};`;
+// fetch once, keep in this device's Cache Storage (works offline afterwards)
+async function cachedBlobUrl(url, type, onProgress) {
+  const c = await caches.open('recall-lib').catch(() => null);
+  let res = c && await c.match(url);
+  if (!res) {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('Could not download the audio tools. Check your internet connection (only needed the first time).');
+    const total = +r.headers.get('content-length') || 0, reader = r.body.getReader(), parts = []; let got = 0;
+    for (;;) { const { done, value } = await reader.read(); if (done) break; parts.push(value); got += value.length; if (total) onProgress?.(got / total); }
+    const blob = new Blob(parts, { type });
+    if (c) await c.put(url, new Response(blob, { headers: { 'content-type': type } })).catch(() => {});
+    return URL.createObjectURL(blob);
+  }
+  return URL.createObjectURL(new Blob([await res.arrayBuffer()], { type }));
+}
+const FF = { coreUrl: '', wasmUrl: '' };
+function ffExt(type) {
+  type = type || '';
+  if (/webm/.test(type)) return 'webm';
+  if (/ogg|opus/.test(type)) return 'ogg';
+  if (/mpeg|mp3/.test(type)) return 'mp3';
+  if (/wav/.test(type)) return 'wav';
+  if (/flac/.test(type)) return 'flac';
+  return 'mp4';
+}
+async function ffTrim(blob, startSec, durSec, onStatus) {
+  if (!FF.wasmUrl) {
+    onStatus('Getting the audio tools ready (one-time download, about 31 MB)…');
+    FF.coreUrl = await cachedBlobUrl(FF_BASE + 'ffmpeg-core.js', 'text/javascript');
+    FF.wasmUrl = await cachedBlobUrl(FF_BASE + 'ffmpeg-core.wasm', 'application/wasm', f => onStatus(`Getting the audio tools ready (one-time download)… ${Math.round(f * 100)}%`));
+  }
+  onStatus('Trimming… (this takes a few seconds, even for long recordings)');
+  const w = new Worker(URL.createObjectURL(new Blob([FF_WORKER], { type: 'text/javascript' })), { type: 'module' });
+  try {
+    const out = await new Promise((res, rej) => {
+      w.onmessage = ({ data }) => data.type === 'done' ? res(data.data) : rej(new Error(data.message));
+      w.onerror = e => { e.preventDefault?.(); rej(new Error('The audio tools failed to start in this browser')); };
+      blob.arrayBuffer().then(buf => w.postMessage({ coreUrl: FF.coreUrl, wasmUrl: FF.wasmUrl, data: buf, ext: ffExt(blob.type), start: startSec, dur: durSec }, [buf]));
+    });
+    return new Blob([out], { type: (blob.type || 'audio/mp4').split(';')[0] });
+  } finally { w.terminate(); }
+}
+function audioDuration(blob) {
+  return new Promise(res => {
+    const a = new Audio(), u = URL.createObjectURL(blob); let done = false;
+    const fin = v => { if (done) return; done = true; URL.revokeObjectURL(u); res(v); };
+    a.preload = 'metadata';
+    a.onloadedmetadata = () => { if (isFinite(a.duration)) fin(Math.round(a.duration * 1000)); else { a.ondurationchange = () => isFinite(a.duration) && fin(Math.round(a.duration * 1000)); a.currentTime = 1e101; } };
+    a.onerror = () => fin(0); setTimeout(() => fin(0), 8000); a.src = u;
+  });
+}
+// "2:57:10", "57:10", "4510" (seconds) -> ms
+function parseTime(s) {
+  s = String(s || '').trim().replace(',', '.'); if (!s) return NaN;
+  const p = s.split(':').map(Number); if (p.some(x => !isFinite(x) || x < 0)) return NaN;
+  const sec = p.length === 3 ? p[0] * 3600 + p[1] * 60 + p[2] : p.length === 2 ? p[0] * 60 + p[1] : p[0];
+  return Math.round(sec * 1000);
+}
+const fmtLong = ms => { const s = Math.max(0, Math.round(ms / 1000)); return `${Math.floor(s / 3600)}:${pad(Math.floor(s % 3600 / 60))}:${pad(s % 60)}`; };
+const trim = { dur: 0, start: 0, end: 0, previewEnd: null, busy: false };
+function trimRender(from) {
+  trim.start = Math.max(0, Math.min(trim.start, trim.dur)); trim.end = Math.max(0, Math.min(trim.end, trim.dur));
+  if (from !== 'startTxt') $('#trimStartTxt').value = fmtLong(trim.start);
+  if (from !== 'endTxt') $('#trimEndTxt').value = fmtLong(trim.end);
+  $('#trimStart').value = trim.start; $('#trimEnd').value = trim.end;
+  const k = $('#trimKeep'); k.style.left = (trim.start / trim.dur * 100) + '%'; k.style.width = Math.max(0, (trim.end - trim.start) / trim.dur * 100) + '%';
+  const ok = trim.end - trim.start >= 1000;
+  const saved = trim.dur - (trim.end - trim.start);
+  $('#trimLen').textContent = ok ? `New length ${fmtLong(trim.end - trim.start)} (was ${fmtLong(trim.dur)}${saved > 1000 ? `, cuts ${fmtLong(saved)}` : ''})` : 'End must be after Start';
+  $('#trimGo').disabled = !ok || trim.busy || saved < 1000;
+}
+function openTrim() {
+  if (!cur?.hasAudio || !cur.audioLocal) return toast('Download the audio first');
+  if (rec) return toast('Stop recording first');
+  if (TX.job?.s === cur || TX.queue.includes(cur.id)) return toast('Wait for the transcription to finish first');
+  trim.dur = Math.round(durMs() || cur.duration || 0);
+  if (!trim.dur) return toast('Couldn’t read the length of this recording');
+  trim.start = 0; trim.end = trim.dur; trim.busy = false;
+  $('#trimStart').max = $('#trimEnd').max = trim.dur;
+  // hints: where the last notes / transcript are, to spot the accidental tail
+  const lastOf = list => (list || []).reduce((m, x) => x.t != null && x.t > m ? x.t : m, -1);
+  const lastNote = lastOf(cur.notes.filter(n => !n.auto)), lastSpeech = Math.max(lastOf(cur.transcript), lastOf(cur.fullTranscript));
+  const parts = [];
+  if (lastNote >= 0) parts.push(`last note at <b>${fmtLong(lastNote)}</b>`);
+  if (lastSpeech >= 0) parts.push(`last transcript line at <b>${fmtLong(lastSpeech)}</b>`);
+  const sugg = Math.max(lastNote, lastSpeech);
+  $('#trimHints').innerHTML = parts.length ? `In this recording: ${parts.join(', ')}.` + (sugg >= 0 && sugg + 60000 < trim.dur ? ` <button class="mini" id="trimSugg">Set End to ${fmtLong(sugg + 60000)}</button>` : '') : '';
+  $('#trimSugg')?.addEventListener('click', () => { trim.end = Math.min(trim.dur, sugg + 60000); trimRender(); });
+  $('#trimStatus').textContent = ''; $('#trimGo').textContent = 'Trim';
+  trimRender(); $('#trimDlg').showModal();
+}
+$('#trimStart').addEventListener('input', e => { trim.start = +e.target.value; if (trim.start > trim.end - 1000) trim.start = Math.max(0, trim.end - 1000); trimRender(); });
+$('#trimEnd').addEventListener('input', e => { trim.end = +e.target.value; if (trim.end < trim.start + 1000) trim.end = Math.min(trim.dur, trim.start + 1000); trimRender(); });
+$('#trimStartTxt').addEventListener('change', e => { const v = parseTime(e.target.value); if (isFinite(v)) trim.start = v; trimRender(); });
+$('#trimEndTxt').addEventListener('change', e => { const v = parseTime(e.target.value); if (isFinite(v)) trim.end = v; trimRender(); });
+$('#trimDlg').addEventListener('click', async e => {
+  const now = e.target.closest('[data-now]'), lis = e.target.closest('[data-listen]');
+  if (now) {
+    if (!isMine() || (audio.currentTime === 0 && audio.paused)) return toast('Play the recording first, then pause where you want to cut');
+    trim[now.dataset.now] = Math.round(audio.currentTime * 1000); trimRender();
+  }
+  if (lis) {
+    if (!await ensureMine()) return;
+    const isEnd = lis.dataset.listen === 'end';
+    trim.previewEnd = isEnd ? trim.end : null;
+    setPos(Math.max(0, (isEnd ? trim.end - 10000 : trim.start) / 1000)); audio.play().catch(() => {});
+  }
+});
+audio.addEventListener('timeupdate', () => { if (trim.previewEnd != null && audio.currentTime * 1000 >= trim.previewEnd) { audio.pause(); trim.previewEnd = null; } });
+$('#trimCancel').addEventListener('click', () => { if (!trim.busy) { trim.previewEnd = null; $('#trimDlg').close(); } });
+$('#trimDlg').addEventListener('cancel', e => { if (trim.busy) e.preventDefault(); });
+$('#trimGo').addEventListener('click', async () => {
+  const s = cur, start = trim.start, end = trim.end;
+  if (!s || trim.busy) return;
+  trim.busy = true; trimRender(); $('#trimGo').textContent = 'Working…';
+  const status = m => { $('#trimStatus').textContent = m; };
+  try {
+    audio.pause(); trim.previewEnd = null;
+    const blob = await DB.getAudio(s.id); if (!blob) throw new Error('Audio not found on this device');
+    if ($('#trimKeepOrig').checked) download(blob, `${fileSafe(s.title)} (untrimmed).${extFor(blob.type)}`);
+    keepAwake(true);
+    const out = await ffTrim(blob, start / 1000, (end - start) / 1000, status);
+    status('Saving…');
+    const newDur = await audioDuration(out) || (end - start);
+    if (player.sid === s.id) clearPlayer();
+    await DB.putAudio(s.id, out);
+    // move everything to the new timeline
+    const inside = t => t != null && t >= start - 500 && t <= end + 500, shift = t => Math.max(0, Math.min(newDur, t - start));
+    let untimed = 0, dropped = 0;
+    for (const n of s.notes) {
+      if (n.t == null) continue;
+      if (inside(n.t)) n.t = shift(n.t); else { n.t = null; untimed++; }
+    }
+    sortNotes();
+    for (const key of ['transcript', 'fullTranscript']) {
+      if (!s[key]) continue;
+      const before = s[key].length;
+      s[key] = s[key].filter(x => inside(x.t)).map(x => ({ ...x, t: shift(x.t) }));
+      dropped += before - s[key].length;
+    }
+    s.duration = newDur; s.audioVersion = (s.audioVersion || 0) + 1; s.audioDirty = true;
+    touch(); await flushSave();
+    $('#trimDlg').close();
+    renderNotes(); renderTranscript(); renderControls(); await loadAudio();
+    toast(`Trimmed to ${fmtLong(newDur)}.` + (untimed ? ` ${untimed} note${untimed > 1 ? 's' : ''} kept without a time.` : '') + (settings.clientId ? ' Sync to update Google Drive.' : ''), 5000);
+  } catch (err) {
+    status('Trim failed: ' + (err.message || err) + '. Your recording hasn’t been changed.');
+  } finally {
+    trim.busy = false; $('#trimGo').textContent = 'Trim'; trimRender(); if (!rec && !TX.job) keepAwake(false);
+  }
+});
+
 /* =========================================================
    MENU: export, delete
    ========================================================= */
@@ -2158,6 +2370,7 @@ $('#menuList [data-act=md]').innerHTML = `${I.doc} Download as text (.md)`;
 $('#menuList [data-act=transcribe]').innerHTML = `${I.doc} Make / redo full transcript`;
 $('#menuList [data-act=replace]').innerHTML = `${I.search} Find & replace…`;
 $('#menuList [data-act=audio]').innerHTML = `${I.down} Download audio`;
+$('#menuList [data-act=trim]').innerHTML = `${I.scissors} Trim audio…`;
 $('#menuList [data-act=freeaudio]').innerHTML = `${I.broom} Remove audio from this device`;
 $('#menuList [data-act=delete]').innerHTML = `${I.trash} Delete recording`;
 $('#moreBtn').addEventListener('click', e => { e.stopPropagation(); $('#menuList').hidden = !$('#menuList').hidden; });
@@ -2193,6 +2406,7 @@ $('#menuList').addEventListener('click', async e => {
   const act = b.dataset.act;
   if (act === 'transcribe') return transcribeRecording();
   if (act === 'replace') return openReplace();
+  if (act === 'trim') return openTrim();
   if (act === 'copy') {
     try { await navigator.clipboard.writeText(toMarkdown(cur)); toast('Copied'); } catch { toast('Could not copy'); }
   } else if (act === 'md') {
@@ -2339,8 +2553,8 @@ function setSyncUI(state, extra) {
 }
 const fileBase = s => `${new Date(s.createdAt).toISOString().slice(0, 10)} ${fileSafe(s.title)}`;
 function sessionData(s) {
-  const { id, title, createdAt, updatedAt, duration, mimeType, lang, notes, transcript, fullTranscript, hasAudio, folder, fullLang, lectureNo, part } = s;
-  return { app: 'recall', v: 1, id, title, createdAt, updatedAt, duration, mimeType, lang, notes, transcript, fullTranscript: fullTranscript || [], hasAudio, folder: folder || '', fullLang: fullLang || '', lectureNo: lectureNo || 0, part: part || 0 };
+  const { id, title, createdAt, updatedAt, duration, mimeType, lang, notes, transcript, fullTranscript, hasAudio, folder, fullLang, lectureNo, part, audioVersion } = s;
+  return { app: 'recall', v: 1, id, title, createdAt, updatedAt, duration, mimeType, lang, notes, transcript, fullTranscript: fullTranscript || [], hasAudio, folder: folder || '', fullLang: fullLang || '', lectureNo: lectureNo || 0, part: part || 0, audioVersion: audioVersion || 0 };
 }
 async function syncAll(interactive = true) {
   if (syncing) return;
@@ -2373,7 +2587,7 @@ async function syncAll(interactive = true) {
         const rUpd = Number(r.json.appProperties?.updatedAt || 0);
         if ((s.updatedAt || 0) > rUpd || (rUpd === (s.updatedAt || 0) && s.notes.some(n => n.photo && !n.photoDrive))) { await pushSession(s, folder, r.json, r.audio, false, r.md, r.photos); up++; }
         else if (rUpd > (s.updatedAt || 0)) { await pullSession(r.json, folder, s, r.audio); down++; if (cur?.id === s.id) changedOpen = true; }
-        else if (s.hasAudio && s.audioLocal && !r.audio) { await pushSession(s, folder, r.json, null, true); up++; }
+        else if (s.hasAudio && s.audioLocal && (!r.audio || s.audioDirty)) { await pushSession(s, folder, r.json, s.audioDirty ? r.audio : null, true); up++; }
         else await patchLocal(s.id, { driveJsonId: r.json.id, driveFolderId: folder, driveAudioId: r.audio?.id || null });
         if (rUpd <= (s.updatedAt || 0) && !r.md) await pushMd(s, folder, null);          // readable copy for older recordings
       }
@@ -2444,13 +2658,14 @@ async function pushSession(s, folder, rJson, rAudio, audioOnly, rMd, rPhotos) {
     fields.driveJsonId = f.id;
     await pushMd(s, folder, rMd);
   }
+  if (rAudio && s.audioDirty && s.audioLocal) { await Drive.trash(rAudio.id); rAudio = null; }      // audio was trimmed: replace it in Drive
   if (rAudio) fields.driveAudioId = rAudio.id;
   else if (s.hasAudio && s.audioLocal) {
     const blob = await DB.getAudio(s.id);
     if (blob) {
       const f = await Drive.uploadBig({ name: fileBase(s) + '.' + extFor(blob.type), parents: [folder], appProperties: { sid: s.id, kind: 'audio' } },
         blob, p => setSyncUI('syncing', `Uploading audio ${Math.round(p * 100)}%`));
-      fields.driveAudioId = f.id;
+      fields.driveAudioId = f.id; fields.audioDirty = false;
     }
   }
   await patchLocal(s.id, fields);
@@ -2461,6 +2676,11 @@ async function pullSession(rJson, folder, localS, rAudio) {
   const merged = { ...(localS || {}), ...data, updatedAt: Number(rJson.appProperties?.updatedAt || data.updatedAt),
     driveJsonId: rJson.id, driveFolderId: folder, driveAudioId: rAudio?.id || null,
     audioLocal: !!localS?.audioLocal, recording: false };
+  if (localS?.audioLocal && (data.audioVersion || 0) !== (localS.audioVersion || 0)) {
+    // the audio was trimmed on another device: drop this device's old copy so the new one is downloaded
+    if (player.sid === localS.id) clearPlayer();
+    await DB.delAudio(localS.id).catch(() => {}); merged.audioLocal = false;
+  }
   delete merged.app; delete merged.v;
   await DB.put(merged);
 }

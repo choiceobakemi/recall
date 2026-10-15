@@ -97,6 +97,20 @@ Open a recording, go to the **Transcript** tab and tap **Transcribe audio**. A s
   - Tick "fix automatically" and future transcripts in that subject are corrected as they're made.
 - **Bible references.** For sermons, references such as "John 3:16" or "Romans chapter eight verse twenty-eight" are listed at the top of your notes. English only.
 
+## Trim a recording
+
+Did you forget to stop recording? Open the recording and choose **⋯ → Trim audio…**.
+
+- Set **Start** and **End**. You can type a time (`2:57:10`), drag the sliders, or tap **Use playback position** while listening. Tap ▶ next to a box to hear that moment.
+- Recall shows where your last note and last transcript line are, and offers **Set End to …** just after them.
+- **Trim** keeps only that part. The cut is exact and takes a few seconds, even on a 4-hour file. The sound isn't re-encoded, so the quality stays the same.
+- Notes, photos and transcripts move to match the new times.
+  - Notes and photos outside the kept part stay, but without a time.
+  - Transcript lines outside it are removed.
+- By default, the untrimmed original is downloaded first, just in case.
+- The first trim downloads the audio tools once (about 31 MB). After that, trimming works offline.
+- When you sync, the trimmed audio replaces the old file in Drive. Other devices drop their old copy and offer **Download audio** for the new one.
+
 ## Backup
 
 ⚙ Settings → **Download full backup** saves one .zip file with all your audio, photos, notes and transcripts, plus readable text copies sorted by subject. **Restore from backup…** brings it back on any device.
