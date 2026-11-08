@@ -62,7 +62,8 @@ Open a recording, go to the **Transcript** tab and tap **Transcribe audio**. A s
 - **Choose a model** in Settings. *Balanced* is the default. *Most accurate* gives better text (especially for Russian) but is a bigger download, so it's best used on your Mac.
 - **The first run downloads the model.** After that it works offline.
 - **It takes a while:** several minutes per hour of audio on a laptop, longer on a phone. Keep Recall open until it finishes. You can cancel, and it keeps whatever it has done so far.
-- **Import** (the ⬆ button on the home screen) brings in audio files, several at once if you like.
+- **Import** (the ⬆ button on the home screen) brings in audio *and video* files, several at once if you like.
+  - **Lecture videos** (.mp4, .mov, .mkv…): Recall keeps only the sound and throws the picture away. This happens on your device, so a 3-hour video takes from a few seconds to a few minutes. If the video records when it was made, Recall files it under that class and date. Otherwise, select the subject's folder first.
   - **From Voice Memos on iPhone:** open the memo, then Share (or ⋯) → **Save to Files**. Then in Recall tap ⬆ and pick it. iPhone doesn't let web apps appear in the Share menu, so this two-step route is the shortest.
   - **On your Mac:** drag a memo straight out of the Voice Memos app and drop it anywhere on the Recall window.
 
@@ -76,7 +77,14 @@ Open a recording, go to the **Transcript** tab and tap **Transcribe audio**. A s
 
 ## In class
 
-- **Timetable.** Your classes are already filled in under ⚙ Settings → Timetable (Mon & Thu Systems Engineering, Tue & Fri Experimental Data Processing, 12:30–15:30).
+- **Timetable.** Your classes are already filled in under ⚙ Settings → Timetable:
+  - Mon & Thu, 12:30–15:30: Systems Engineering
+  - Tue & Fri, 12:30–15:30: Experimental Data Processing
+  - Mon, Tue & Thu, 16:00–19:00: Robotics
+  - Wed, 16:00–18:00: CESS Seminars
+  - Wed & Fri, 16:00–19:00: Planning Algorithms in AI
+- **Clashes** (Wednesday 16:00): the record button says *CESS Seminars*, with a **Switch** button above it if you are recording Planning Algorithms instead. A lecture video you import later from that slot goes to the class you *didn't* record that day.
+- **Lecture numbers** carry on from where you were. Robotics and Planning Algorithms start at Lecture 7. To change one, go to ⚙ Settings → Timetable → *Next lecture number*.
   - During class, the red button shows the subject. Tap it and the recording is named "Systems Engineering · Lecture 6" and filed in that folder.
   - Stop and start again after a break, and it becomes **Part 2** of the same lecture. Or just tap **Pause** during the break.
   - Imported Voice Memos made during a class are filed the same way.

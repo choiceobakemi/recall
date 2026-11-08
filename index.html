@@ -67,6 +67,10 @@ svg{width:20px;height:20px;flex:none}
 .empty h2{color:var(--ink);font-size:18px;margin:0 0 6px}
 .fab{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom));display:inline-flex;align-items:center;gap:10px;background:var(--rec);color:#fff;font-weight:600;padding:14px 22px;border-radius:999px;box-shadow:0 6px 20px rgba(229,72,77,.35)}
 .fab .d{width:12px;height:12px;border-radius:50%;background:#fff}
+.fab-alt{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom));max-width:calc(100vw - 32px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:13px;box-shadow:var(--shadow)}
+.fab-alt b{color:var(--accent)}
+.lec-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:4px 0}
+.lec-row input{width:76px}
 
 /* session */
 #title{flex:1;min-width:0;border:0;background:transparent;font-size:18px;font-weight:600;padding:6px 8px;border-radius:8px;outline:none}
@@ -211,6 +215,7 @@ details summary{cursor:pointer;font-weight:600;font-size:14px;margin:6px 0}
 .mp-info b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mp-info span{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
 body.mini-on .fab{bottom:calc(92px + env(safe-area-inset-bottom))}
+body.mini-on .fab-alt{bottom:calc(156px + env(safe-area-inset-bottom))}
 body.mini-on #list{padding-bottom:90px}
 /* tools row, photos, topics, find, scriptures */
 .tools{display:flex;gap:6px;padding:0 16px;flex-wrap:wrap}
@@ -292,7 +297,7 @@ mark{background:#ffe58a;color:inherit;border-radius:3px;padding:0 1px}
   <header class="bar">
     <h1>Recall</h1>
     <button id="importBtn" class="icon-btn" title="Import an audio file (e.g. from Voice Memos)" aria-label="Import audio"></button>
-    <input id="fileIn" type="file" accept="audio/*,.m4a,.mp3,.wav,.aac,.webm,.ogg,.opus,.flac" multiple hidden>
+    <input id="fileIn" type="file" accept="audio/*,video/*,.m4a,.mp3,.wav,.aac,.webm,.ogg,.opus,.flac,.mp4,.mov,.m4v,.mkv,.avi" multiple hidden>
     <button id="syncBtn" class="icon-btn" title="Sync with Google Drive"></button>
     <button id="settingsBtn" class="icon-btn" title="Settings" aria-label="Settings"></button>
   </header>
@@ -301,6 +306,7 @@ mark{background:#ffe58a;color:inherit;border-radius:3px;padding:0 1px}
   <div class="folderbar" id="folderBar" hidden></div>
   <div class="txglobal" id="txGlobal" hidden><span id="txGMsg"></span><button id="txGStop">Stop</button></div>
   <main id="list"></main>
+  <button id="fabAlt" class="fab-alt" hidden></button>
   <button id="newBtn" class="fab"><span class="d"></span><span class="lbl" id="newLbl">New recording</span></button>
 </section>
 
@@ -422,7 +428,9 @@ mark{background:#ffe58a;color:inherit;border-radius:3px;padding:0 1px}
     <label class="check"><input type="checkbox" id="setTT"> Name and file recordings automatically during class</label>
     <div id="ttRows"></div>
     <button id="ttAdd" class="btn">+ Add a class</button>
-    <p class="small">From 20 minutes before a class until 15 minutes after, <b>New recording</b> is named like “Systems Engineering · Lecture 6” and filed in that subject's folder. Imported Voice Memos recorded during a class are filed the same way. If you stop and start again after a break, it becomes Part 2 of the same lecture. Tip: tap <b>Pause</b> during breaks to keep it all in one recording.</p>
+    <p class="small">From 20 minutes before a class until 15 minutes after, <b>New recording</b> is named like “Systems Engineering · Lecture 6” and filed in that subject's folder. If you stop and start again after a break, it becomes Part 2 of the same lecture. Tip: tap <b>Pause</b> during breaks to keep it all in one recording.</p>
+    <p class="small">When two classes clash, the one higher in this list is used, and a <b>Switch</b> button above the record button lets you pick the other. Imported recordings and lecture videos are filed by when they were recorded, or into the folder you have selected on the home screen.</p>
+    <div id="lecNos"></div>
 
     <h3>Sermons</h3>
     <label class="check"><input type="checkbox" id="setScripture"> Detect Bible references (e.g. “John 3:16”) and list them on the recording</label>
@@ -591,10 +599,29 @@ const DEFAULT_TIMETABLE = [
   { day: 2, start: '12:30', end: '15:30', subject: 'Experimental Data Processing' },
   { day: 4, start: '12:30', end: '15:30', subject: 'Systems Engineering' },
   { day: 5, start: '12:30', end: '15:30', subject: 'Experimental Data Processing' },
+  { day: 1, start: '16:00', end: '19:00', subject: 'Robotics' },
+  { day: 2, start: '16:00', end: '19:00', subject: 'Robotics' },
+  { day: 4, start: '16:00', end: '19:00', subject: 'Robotics' },
+  { day: 3, start: '16:00', end: '18:00', subject: 'CESS Seminars' },              // above Planning Algorithms, so it wins the Wednesday clash
+  { day: 3, start: '16:00', end: '19:00', subject: 'Planning Algorithms in AI' },
+  { day: 5, start: '16:00', end: '19:00', subject: 'Planning Algorithms in AI' },
 ];
 const settings = Object.assign({ lang: guessLang(), transcript: true, clientId: '', autoSync: true, driveConnected: false, lastSync: 0,
   timetable: DEFAULT_TIMETABLE, autoTimetable: true, autoTranscribe: !/iPad|iPhone|iPod|Android/.test(navigator.userAgent), scripture: true, fixes: {} }, ls.get('settings', {}));
 const saveSettings = () => ls.set('settings', settings);
+// Nov 2026: three new courses. Robotics and Planning Algorithms already had 6 lectures, so the next one is Lecture 7.
+if ((settings.ttv || 1) < 2) {
+  const tt = (settings.timetable ||= []);
+  for (const r of DEFAULT_TIMETABLE.slice(4)) {
+    if (tt.some(x => +x.day === r.day && x.subject === r.subject)) continue;
+    const i = r.subject === 'CESS Seminars' ? tt.findIndex(x => x.subject === 'Planning Algorithms in AI') : -1;
+    if (i >= 0) tt.splice(i, 0, { ...r }); else tt.push({ ...r });
+  }
+  const from = new Date(2026, 10, 9).getTime();
+  settings.lectureBase = { 'Robotics': { n: 6, since: from }, 'Planning Algorithms in AI': { n: 6, since: from }, ...(settings.lectureBase || {}) };
+  settings.folders = [...new Set([...(settings.folders || []), 'Robotics', 'CESS Seminars', 'Planning Algorithms in AI'])];
+  settings.ttv = 2; saveSettings();
+}
 const fileSafe = s => (s || 'Recording').replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, ' ').trim().slice(0, 80);
 const dateStr = ts => new Date(ts).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
 function download(blob, name) {
@@ -824,17 +851,34 @@ $('#folderSel').addEventListener('change', e => {
 /* ---------- timetable: name and file recordings made during class ---------- */
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const toMin = s => { const [hh, mm] = String(s || '0:0').split(':').map(Number); return (hh || 0) * 60 + (mm || 0); };
-function classAt(date = new Date()) {
-  if (settings.autoTimetable === false) return null;
+let ttPick = '';                                   // "Switch" on a clash
+function classesAt(date = new Date()) {
+  if (settings.autoTimetable === false) return [];
   const day = (date.getDay() + 6) % 7 + 1, m = date.getHours() * 60 + date.getMinutes();
-  return (settings.timetable || []).find(r => +r.day === day && r.subject?.trim() && m >= toMin(r.start) - 20 && m <= toMin(r.end) + 15) || null;
+  return (settings.timetable || []).filter(r => +r.day === day && r.subject?.trim() && m >= toMin(r.start) - 20 && m <= toMin(r.end) + 15);
+}
+function classAt(date = new Date()) { const all = classesAt(date); return all.find(r => r.subject === ttPick) || all[0] || null; }
+const isTTSubject = f => !!f && (settings.timetable || []).some(r => cleanFolder(r.subject) === f);
+function nextLectureNo(folder, list, at = Date.now()) {
+  const others = list.filter(x => x.folder === folder && !x.pendingDelete && x.createdAt < at);
+  const base = settings.lectureBase?.[folder];
+  if (base) return Math.max(base.n, ...others.filter(x => x.createdAt >= base.since && x.lectureNo).map(x => x.lectureNo)) + 1;
+  return new Set(others.map(x => new Date(x.createdAt).toDateString())).size + 1;
 }
 const lectureTitle = (f, n, part) => `${f} · Lecture ${n}${part ? ' · Part ' + part : ''}`;
-async function applyTimetable(s, when = new Date(s.createdAt)) {
-  const cls = classAt(when); if (!cls) return false;
-  const folder = addFolder(cls.subject); s.folder = folder;
-  const others = (await DB.all()).filter(x => x.id !== s.id && x.folder === folder && !x.pendingDelete);
-  const dayKey = d => new Date(d).toDateString();
+async function applyTimetable(s, when = new Date(s.createdAt), { folder: chosen = '', imported = false } = {}) {
+  const all = (await DB.all()).filter(x => x.id !== s.id), dayKey = d => new Date(d).toDateString();
+  let folder = chosen;
+  if (folder) { if (!isTTSubject(folder)) return false; }          // a folder you picked that isn't a class: just file it there
+  else {
+    const list = classesAt(when); if (!list.length) return false;
+    let cls = list.find(r => r.subject === ttPick) || list[0];
+    // an import from a clash slot goes to the class that has no recording that day yet (e.g. the lecture video you watch later)
+    if (imported && list.length > 1) cls = list.find(r => !all.some(x => x.folder === cleanFolder(r.subject) && dayKey(x.createdAt) === dayKey(when) && !x.pendingDelete)) || cls;
+    folder = cls.subject;
+  }
+  folder = addFolder(folder); s.folder = folder;
+  const others = all.filter(x => x.folder === folder && !x.pendingDelete);
   const sameDay = others.filter(x => dayKey(x.createdAt) === dayKey(s.createdAt) && x.lectureNo);
   if (sameDay.length) {                         // came back after a break: Part 2, 3…
     s.lectureNo = sameDay[0].lectureNo;
@@ -845,16 +889,35 @@ async function applyTimetable(s, when = new Date(s.createdAt)) {
       x.updatedAt = Date.now(); await DB.put(x);
     }
   } else {
-    s.lectureNo = new Set(others.filter(x => x.createdAt < s.createdAt).map(x => dayKey(x.createdAt))).size + 1;
+    const base = settings.lectureBase?.[folder];
+    if (imported && base && s.createdAt < base.since) return true;     // an older lecture imported later: filed, keeps its own name
+    s.lectureNo = nextLectureNo(folder, others, s.createdAt);
     s.part = 0;
   }
   s.title = lectureTitle(folder, s.lectureNo, s.part);
   return true;
 }
 function updateFab() {
-  const cls = classAt();
+  const all = classesAt(); if (ttPick && !all.some(r => r.subject === ttPick)) ttPick = '';
+  const cls = all.find(r => r.subject === ttPick) || all[0];
   $('#newLbl').innerHTML = cls ? `${esc(cls.subject)}<small>Tap to record · until ${esc(cls.end)}</small>` : 'New recording';
+  const alt = cls && all.find(r => r.subject !== cls.subject);
+  $('#fabAlt').hidden = !alt || !!rec;
+  if (alt) { $('#fabAlt').innerHTML = `Recording ${esc(alt.subject)} instead? <b>Switch</b>`; $('#fabAlt').dataset.s = alt.subject; }
 }
+$('#fabAlt').addEventListener('click', e => { ttPick = e.currentTarget.dataset.s; updateFab(); toast(`New recordings now go to ${ttPick}`); });
+async function renderLectureNos() {
+  const subs = [...new Set((settings.timetable || []).map(r => cleanFolder(r.subject)).filter(Boolean))];
+  const all = await DB.all();
+  $('#lecNos').innerHTML = subs.length ? '<p class="small" style="margin-top:14px"><b>Next lecture number</b> per subject. Change it if you missed recording some lectures.</p>' +
+    subs.map(f => `<label class="lec-row"><span>${esc(f)}</span><input type="number" min="1" max="999" inputmode="numeric" data-f="${esc(f)}" value="${nextLectureNo(f, all)}" aria-label="Next ${esc(f)} lecture number"></label>`).join('') : '';
+}
+$('#lecNos').addEventListener('change', e => {
+  const f = e.target.dataset.f; if (!f) return;
+  const v = Math.max(1, Math.min(999, Math.round(+e.target.value || 1))); e.target.value = v;
+  (settings.lectureBase ||= {})[f] = { n: v - 1, since: Date.now() }; saveSettings();
+  toast(`The next ${f} recording will be Lecture ${v}`);
+});
 setInterval(() => { if (!$('#home').hidden) updateFab(); }, 60000);
 function renderTT() {
   const rows = settings.timetable || [];
@@ -865,12 +928,14 @@ function renderTT() {
       <button data-del aria-label="Remove class">✕</button>
       <input class="tt-sub" data-k="subject" type="text" value="${esc(r.subject)}" placeholder="Subject (becomes the folder name)" aria-label="Subject">
     </div>`).join('') || '<p class="small">No classes yet.</p>';
+  renderLectureNos();
 }
 $('#ttRows').addEventListener('change', e => {
   const row = e.target.closest('.tt-row'); if (!row) return;
   const r = settings.timetable[+row.dataset.i]; const k = e.target.dataset.k; if (!k) return;
   r[k] = k === 'day' ? +e.target.value : k === 'subject' ? cleanFolder(e.target.value) : e.target.value;
-  saveSettings(); updateFab();
+  if (k === 'subject' && r.subject) addFolder(r.subject);
+  saveSettings(); updateFab(); if (k === 'subject') renderLectureNos();
 });
 $('#ttRows').addEventListener('click', e => {
   if (!e.target.closest('[data-del]')) return;
@@ -2141,9 +2206,11 @@ $('#transcriptList').addEventListener('click', e => { if (e.target.closest('[dat
 /* ---------- import an audio file (e.g. a Voice Memo) ---------- */
 $('#importBtn').addEventListener('click', () => $('#fileIn').click());
 $('#fileIn').addEventListener('change', e => { const fs = [...(e.target.files || [])]; e.target.value = ''; importFiles(fs); });
+const VIDEO_EXT = /\.(mp4|mov|m4v|mkv|avi|wmv|flv|3gp|mpg|mpeg|mts|ts)$/i;
+const isVideo = f => /^video\//.test(f.type) || VIDEO_EXT.test(f.name);
 async function importFiles(files) {
-  files = files.filter(f => /^audio\//.test(f.type) || /\.(m4a|mp3|wav|aac|webm|ogg|opus|flac|caf)$/i.test(f.name));
-  if (!files.length) { toast('Choose an audio file (for example a Voice Memo .m4a)'); return; }
+  files = files.filter(f => /^audio\//.test(f.type) || isVideo(f) || /\.(m4a|mp3|wav|aac|webm|ogg|opus|flac|caf)$/i.test(f.name));
+  if (!files.length) { toast('Choose an audio or video file (for example a Voice Memo or a lecture recording)'); return; }
   if (rec) { toast('Stop recording first'); return; }
   let lastId = null;
   for (const f of files) { const id = await importOne(f); if (id) lastId = id; }
@@ -2153,19 +2220,28 @@ async function importFiles(files) {
 }
 async function importOne(f) {
   const ext = (f.name.split('.').pop() || '').toLowerCase();
-  const type = f.type || ({ m4a: 'audio/mp4', mp3: 'audio/mpeg', wav: 'audio/wav', aac: 'audio/aac', webm: 'audio/webm', ogg: 'audio/ogg', opus: 'audio/ogg', flac: 'audio/flac' })[ext] || 'audio/mp4';
-  const blob = new Blob([f], { type });
-  const duration = await new Promise(res => {
-    const a = new Audio(), u = URL.createObjectURL(blob); let done = false;
-    const fin = v => { if (done) return; done = true; URL.revokeObjectURL(u); res(v); };
-    a.preload = 'metadata';
-    a.onloadedmetadata = () => { if (isFinite(a.duration)) fin(Math.round(a.duration * 1000)); else { a.ondurationchange = () => isFinite(a.duration) && fin(Math.round(a.duration * 1000)); a.currentTime = 1e101; } };
-    a.onerror = () => fin(0); setTimeout(() => fin(0), 8000); a.src = u;
-  });
+  let type, blob, duration, when = 0;
+  if (isVideo(f)) {
+    // a video (e.g. a lecture recording): keep only its sound, on this device
+    let r;
+    try { r = await ffExtract(f, msg => toast(msg, 600000)); }
+    catch (e) { toast(`“${f.name}”: ${e.message}`, 6000); return null; }
+    type = r.ext === 'mp3' ? 'audio/mpeg' : 'audio/mp4';
+    blob = new Blob([r.data], { type });
+    duration = await audioDuration(blob) || Math.round((r.dur || 0) * 1000);
+    const c = Date.parse(r.created || '');
+    if (c > Date.UTC(2005, 0, 1) && c < Date.now() + 864e5) when = c;     // when the video was recorded, if it says
+    toast(r.encoded ? 'Sound extracted from the video' : 'Sound taken from the video (original quality)', 3000);
+  } else {
+    type = f.type || ({ m4a: 'audio/mp4', mp3: 'audio/mpeg', wav: 'audio/wav', aac: 'audio/aac', webm: 'audio/webm', ogg: 'audio/ogg', opus: 'audio/ogg', flac: 'audio/flac' })[ext] || 'audio/mp4';
+    blob = new Blob([f], { type });
+    duration = await audioDuration(blob);
+  }
   if (!duration) { toast(`“${f.name}” couldn’t be opened as audio`, 4000); return null; }
+  when = when || f.lastModified || Date.now();
   const s = newSession();
-  Object.assign(s, { title: f.name.replace(/\.[^.]+$/, '') || s.title, createdAt: f.lastModified || Date.now(), duration, mimeType: type, hasAudio: true, audioLocal: true, imported: true });
-  if (f.lastModified) await applyTimetable(s, new Date(f.lastModified));
+  Object.assign(s, { title: f.name.replace(/\.[^.]+$/, '') || s.title, createdAt: when, duration, mimeType: type, hasAudio: true, audioLocal: true, imported: true });
+  await applyTimetable(s, new Date(when), { folder: s.folder, imported: true });
   await DB.putAudio(s.id, blob); await DB.put(s);
   return s.id;
 }
@@ -2187,14 +2263,45 @@ window.addEventListener('drop', e => {
    ========================================================= */
 const FF_BASE = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm/';
 const FF_WORKER = `
-let core = null;
+let core = null, logs = [];
+const run = args => { logs = []; core.exec(...args); const ret = core.ret; core.reset(); return ret; };
+function extract(m) {
+  const dir = '/v'; try { core.FS.mkdir(dir); } catch (e) {}
+  core.FS.mount(core.FS.filesystems.WORKERFS, { files: [m.file] }, dir);      // reads the video lazily, never loads it all
+  try {
+    const inp = dir + '/' + m.file.name;
+    run(['-hide_banner', '-i', inp]);
+    const info = logs.join('\\n');
+    const codec = (info.match(/Stream #[^\\n]*Audio: (\\w+)/) || [])[1] || '';
+    if (!codec) throw new Error(/Invalid data|moov atom/.test(info) ? 'this file couldn’t be read' : 'this video has no sound');
+    const created = (info.match(/creation_time\\s*:\\s*(\\S+)/) || [])[1] || '';
+    const d = info.match(/Duration: (\\d+):(\\d+):([\\d.]+)/), dur = d ? +d[1] * 3600 + +d[2] * 60 + +d[3] : 0;
+    self.postMessage({ type: 'info', dur });
+    const plans = codec === 'aac' ? [['m4a', 'copy']] : codec === 'mp3' ? [['mp3', 'copy']] : [];
+    plans.push(['m4a', 'aac']);
+    for (const [ext, how] of plans) {
+      const out = 'audio.' + ext, args = ['-hide_banner', '-i', inp, '-map', '0:a:0', '-vn', '-sn', '-dn'];
+      args.push(...(how === 'copy' ? ['-c:a', 'copy'] : ['-c:a', 'aac', '-ac', '1', '-b:a', '64k']));
+      if (ext === 'm4a') args.push('-movflags', '+faststart');
+      args.push(out);
+      const ret = run(args);
+      if (ret === 0) {
+        const data = core.FS.readFile(out); try { core.FS.unlink(out); } catch (e) {}
+        self.postMessage({ type: 'done', data: data.buffer, ext, created, dur, encoded: how !== 'copy' }, [data.buffer]); return;
+      }
+      try { core.FS.unlink(out); } catch (e) {}
+    }
+    throw new Error('couldn’t get the sound out of this video');
+  } finally { try { core.FS.unmount(dir); } catch (e) {} }
+}
 self.onmessage = async ({ data: m }) => {
   try {
     if (!core) {
       const mod = await import(m.coreUrl);
       core = await mod.default({ mainScriptUrlOrBlob: m.coreUrl + '#' + btoa(JSON.stringify({ wasmURL: m.wasmUrl, workerURL: '' })) });
-      core.setLogger(() => {});
+      core.setLogger(({ message }) => { logs.push(message); if (logs.length > 300) logs.shift(); if (/time=\\d/.test(message)) self.postMessage({ type: 'log', message }); });
     }
+    if (m.op === 'extract') return extract(m);
     const inName = 'in.' + m.ext, outName = 'out.' + m.ext;
     core.FS.writeFile(inName, new Uint8Array(m.data));
     // browser-made webm/ogg files have no seek index, so seek after reading (still no re-encoding)
@@ -2235,17 +2342,37 @@ function ffExt(type) {
   if (/flac/.test(type)) return 'flac';
   return 'mp4';
 }
-async function ffTrim(blob, startSec, durSec, onStatus) {
+async function ffLoad(onStatus) {
   if (!FF.wasmUrl) {
     onStatus('Getting the audio tools ready (one-time download, about 31 MB)…');
     FF.coreUrl = await cachedBlobUrl(FF_BASE + 'ffmpeg-core.js', 'text/javascript');
     FF.wasmUrl = await cachedBlobUrl(FF_BASE + 'ffmpeg-core.wasm', 'application/wasm', f => onStatus(`Getting the audio tools ready (one-time download)… ${Math.round(f * 100)}%`));
   }
+}
+async function ffExtract(file, onStatus) {
+  await ffLoad(onStatus);
+  onStatus(`Taking the sound out of “${file.name}”…`);
+  const w = new Worker(URL.createObjectURL(new Blob([FF_WORKER], { type: 'text/javascript' })), { type: 'module' });
+  try {
+    return await new Promise((res, rej) => {
+      let dur = 0;
+      w.onmessage = ({ data }) => {
+        if (data.type === 'info') dur = data.dur;
+        else if (data.type === 'log') { const t = data.message.match(/time=(\d+):(\d+):([\d.]+)/); if (t && dur) onStatus(`Taking the sound out of “${file.name}”… ${Math.min(99, Math.round((+t[1] * 3600 + +t[2] * 60 + +t[3]) / dur * 100))}%`); }
+        else if (data.type === 'done') res(data); else rej(new Error(data.message));
+      };
+      w.onerror = e => { e.preventDefault?.(); rej(new Error('the audio tools failed to start in this browser')); };
+      w.postMessage({ op: 'extract', coreUrl: FF.coreUrl, wasmUrl: FF.wasmUrl, file });
+    });
+  } finally { w.terminate(); }
+}
+async function ffTrim(blob, startSec, durSec, onStatus) {
+  await ffLoad(onStatus);
   onStatus('Trimming… (this takes a few seconds, even for long recordings)');
   const w = new Worker(URL.createObjectURL(new Blob([FF_WORKER], { type: 'text/javascript' })), { type: 'module' });
   try {
     const out = await new Promise((res, rej) => {
-      w.onmessage = ({ data }) => data.type === 'done' ? res(data.data) : rej(new Error(data.message));
+      w.onmessage = ({ data }) => data.type === 'done' ? res(data.data) : data.type === 'error' && rej(new Error(data.message));
       w.onerror = e => { e.preventDefault?.(); rej(new Error('The audio tools failed to start in this browser')); };
       blob.arrayBuffer().then(buf => w.postMessage({ coreUrl: FF.coreUrl, wasmUrl: FF.wasmUrl, data: buf, ext: ffExt(blob.type), start: startSec, dur: durSec }, [buf]));
     });
@@ -2565,6 +2692,7 @@ async function syncAll(interactive = true) {
     await Drive.auth(interactive);           // must be first (sign-in pop-up needs your tap)
     await flushSave();
     const folder = await Drive.folder();
+    for (const subj of new Set((settings.timetable || []).map(r => cleanFolder(r.subject)).filter(Boolean))) await Drive.subfolder(folder, subj);   // a Drive folder for every class
     const files = (await Drive.list(folder)).concat(await Drive.listMd().catch(() => []));
     const remote = {};
     for (const f of files) {
